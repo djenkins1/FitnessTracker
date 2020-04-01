@@ -1,6 +1,7 @@
 CREATE TABLE public.fitness_week
 (
   week_id bigint NOT NULL,
+  total_time bigint,
   total_miles double precision,
   total_calories double precision,
   miles_to_date bigint,
@@ -12,5 +13,5 @@ CREATE TABLE public.fitness_week
 )
 
 -- Sample Data
-INSERT INTO fitness_week( week_id , total_miles , total_calories, miles_to_date, days_exercised , date_recorded, exercise_type, created_date )
-VALUES( 1 , 53.0 , 281.2 + 999.9 , 2675 , 'S/M/T/W' , '3/4/2020', 'Cycling' , NOW() ); 
+INSERT INTO fitness_week( week_id , total_time, total_miles , total_calories, miles_to_date, days_exercised , date_recorded, exercise_type, created_date )
+VALUES( 1 , 180, 53.0 , 281.2 + 999.9 , 2675 , 'S/M/T/W' , '3/4/2020', 'Cycling' , NOW() ); 
