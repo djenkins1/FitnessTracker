@@ -17,4 +17,9 @@ public class FitnessWeekService {
 		List<FitnessWeek> toReturn = fitnessWeekRepo.findAll();
 		return toReturn;
 	}
+
+	public FitnessWeek createFitnessWeek(FitnessWeek fitnessWeek) {
+		return fitnessWeekRepo.save( fitnessWeek );
+		
+	}
 }
