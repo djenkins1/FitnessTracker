@@ -1,6 +1,7 @@
 package com.djenkins.fitness.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,15 @@ public class FitnessWeekService {
 	public FitnessWeek createFitnessWeek(FitnessWeek fitnessWeek) {
 		return fitnessWeekRepo.save( fitnessWeek );
 		
+	}
+
+	public FitnessWeek getFitnessWeekById(long weekId) {
+		Optional<FitnessWeek> result = fitnessWeekRepo.findById(weekId);
+		if ( result.isPresent() ) {
+			return result.get();
+		}
+		else {
+			return null;
+		}
 	}
 }
