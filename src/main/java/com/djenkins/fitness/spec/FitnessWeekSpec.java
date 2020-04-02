@@ -49,7 +49,7 @@ public class FitnessWeekSpec implements Specification<FitnessWeek> {
 			predicates.add(root.get("exerciseType").in(filterByCriteria.getExerciseTypes()));
 		}
 
-		return criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
+		return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
 	}
 
 	public FitnessWeekFilter getFilterByCriteria() {
