@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.djenkins.fitness.domain.FitnessWeek;
+import com.djenkins.fitness.domain.FitnessWeekFilter;
 import com.djenkins.fitness.repo.FitnessWeekRepository;
+import com.djenkins.fitness.spec.FitnessWeekSpec;
 
 @Service
 public class FitnessWeekService {
@@ -32,5 +34,11 @@ public class FitnessWeekService {
 		else {
 			return null;
 		}
+	}
+	
+	public List<FitnessWeek> getFitnessWeeksByFilter( FitnessWeekFilter filter ){
+		List<FitnessWeek> results = fitnessWeekRepo.findAll( new FitnessWeekSpec( filter ) ); 
+		return results;
+		
 	}
 }
