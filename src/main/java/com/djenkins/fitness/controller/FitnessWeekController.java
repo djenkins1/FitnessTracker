@@ -54,7 +54,6 @@ public class FitnessWeekController {
 
 	@RequestMapping(value = FitnessWeekEndpointConstants.GET_WEEK, method = RequestMethod.GET)
 	public FitnessWeek getWeek(@PathVariable("id") long weekId) {
-		// TODO: return error message if not found?
 		return fitnessWeekService.getFitnessWeekById(weekId);
 	}
 
@@ -62,6 +61,7 @@ public class FitnessWeekController {
 	public @ResponseBody FitnessWeek createFitnessWeek(@RequestBody FitnessWeek fitnessWeek) {
 		// TODO: validation, see Spring AOP
 		fitnessWeek.setCreatedTs(Timestamp.from(Instant.now()));
+		fitnessWeek.setId( null );//set to null in case passed into request
 		return fitnessWeekService.createFitnessWeek(fitnessWeek);
 	}
 }

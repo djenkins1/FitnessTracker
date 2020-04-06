@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +34,7 @@ public class FitnessWeekService {
 		if (result.isPresent()) {
 			return result.get();
 		} else {
-			return null;
+			throw new EntityNotFoundException("Could not find FitnessWeek with id: " + weekId );
 		}
 	}
 

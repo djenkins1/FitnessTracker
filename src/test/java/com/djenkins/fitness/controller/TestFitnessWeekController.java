@@ -19,6 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.sql.Date;
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import static org.hamcrest.Matchers.*;
 
 import com.djenkins.fitness.domain.FitnessWeek;
@@ -68,7 +70,7 @@ public class TestFitnessWeekController {
 	}
 
 	@Test
-	public void testGetWeekBySpecificId() throws Exception {
+	public void testGetWeekBySpecificIdSuccess() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
 		FitnessWeek testResult = testDataResults.get(0);
 		Long id = testResult.getId();
@@ -84,6 +86,20 @@ public class TestFitnessWeekController {
 				.andExpect(jsonPath("$.daysExercised", is(testResult.getDaysExercised())))
 				.andExpect(jsonPath("$.dateRecorded", is(testResult.getDateRecorded().toString())))
 				.andExpect(jsonPath("$.exerciseType", is(testResult.getExerciseType())));
+
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getFitnessWeekById(id);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testGetWeekBySpecificIdNotFound() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		FitnessWeek testResult = testDataResults.get(0);
+		Long id = testResult.getId();
+
+		when(fitnessWeekServiceMock.getFitnessWeekById(id)).thenThrow(new EntityNotFoundException());
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_WEEK, id)).andExpect(status().isNotFound());
 
 		// verify that the method was only called once
 		verify(fitnessWeekServiceMock, times(1)).getFitnessWeekById(id);
