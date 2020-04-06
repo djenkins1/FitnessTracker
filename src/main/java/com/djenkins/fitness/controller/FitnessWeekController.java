@@ -23,7 +23,7 @@ public class FitnessWeekController {
 	@Autowired
 	private FitnessWeekService fitnessWeekService;
 
-	@RequestMapping(value = "/rest/fitnessWeeks", method = RequestMethod.GET)
+	@RequestMapping(value = FitnessWeekEndpointConstants.GET_ALL, method = RequestMethod.GET)
 	public List<FitnessWeek> getAll() {
 		return fitnessWeekService.getAllFitnessWeek();
 	}
@@ -33,7 +33,7 @@ public class FitnessWeekController {
 	 * @param endDate A date in the format of YYYY-MM-dd
 	 * @return List of FitnessWeek objects that have recordedDate between start date and end date
 	 */
-	@RequestMapping(value = "/rest/fitnessWeeks/between", method = RequestMethod.GET)
+	@RequestMapping(value = FitnessWeekEndpointConstants.GET_IN_RANGE, method = RequestMethod.GET)
 	public List<FitnessWeek> getInRange(@RequestParam Date startDate, @RequestParam Date endDate) {
 		// get fitness weeks with recordedDate between startDate and endDate
 		FitnessWeekFilter filterByDates = new FitnessWeekFilter();
@@ -42,7 +42,7 @@ public class FitnessWeekController {
 		return fitnessWeekService.getFitnessWeeksByFilter(filterByDates);
 	}
 	
-	@RequestMapping(value = "/rest/fitnessWeeks/ids", method = RequestMethod.GET)
+	@RequestMapping(value = FitnessWeekEndpointConstants.GET_BY_IDS, method = RequestMethod.GET)
 	public List<FitnessWeek> getByIds(@RequestParam List<Long> ids ) {
 		// get fitness weeks having ids given
 		// TODO: validation, see Spring AOP
@@ -51,7 +51,7 @@ public class FitnessWeekController {
 		return fitnessWeekService.getFitnessWeeksByFilter(filterByIds);
 	}
 
-	@RequestMapping(value = "/rest/fitnessWeeks/exerciseTypes", method = RequestMethod.GET)
+	@RequestMapping(value = FitnessWeekEndpointConstants.GET_BY_EXERCISE_TYPE, method = RequestMethod.GET)
 	public List<FitnessWeek> getByExerciseType(@RequestParam List<String> exerciseTypes ) {
 		// TODO: validation, see Spring AOP
 		FitnessWeekFilter filterByTypes = new FitnessWeekFilter();
@@ -59,13 +59,13 @@ public class FitnessWeekController {
 		return fitnessWeekService.getFitnessWeeksByFilter(filterByTypes);
 	}
 
-	@RequestMapping(value = "/rest/fitnessWeek/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = FitnessWeekEndpointConstants.GET_WEEK, method = RequestMethod.GET)
 	public FitnessWeek getWeek(@PathVariable("id") long weekId) {
 		// TODO: return error message if not found?
 		return fitnessWeekService.getFitnessWeekById(weekId);
 	}
 
-	@RequestMapping(value = "/rest/fitnessWeeks", method = RequestMethod.POST)
+	@RequestMapping(value = FitnessWeekEndpointConstants.CREATE_WEEK, method = RequestMethod.POST)
 	public @ResponseBody FitnessWeek createFitnessWeek(@RequestBody FitnessWeek fitnessWeek) {
 		// TODO: validation, see Spring AOP
 		fitnessWeek.setCreatedTs(Timestamp.from(Instant.now()));
