@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.djenkins.fitness.domain.FitnessWeek;
-import com.djenkins.fitness.domain.FitnessWeekFilter;
 import com.djenkins.fitness.service.FitnessWeekService;
 
 @RestController
@@ -30,33 +29,27 @@ public class FitnessWeekController {
 
 	/**
 	 * @param startDate A date in the format of YYYY-MM-dd
-	 * @param endDate A date in the format of YYYY-MM-dd
-	 * @return List of FitnessWeek objects that have recordedDate between start date and end date
+	 * @param endDate   A date in the format of YYYY-MM-dd
+	 * @return List of FitnessWeek objects that have recordedDate between start date
+	 *         and end date
 	 */
 	@RequestMapping(value = FitnessWeekEndpointConstants.GET_IN_RANGE, method = RequestMethod.GET)
 	public List<FitnessWeek> getInRange(@RequestParam Date startDate, @RequestParam Date endDate) {
 		// get fitness weeks with recordedDate between startDate and endDate
-		FitnessWeekFilter filterByDates = new FitnessWeekFilter();
-		filterByDates.setFromDateRecorded(startDate);
-		filterByDates.setToDateRecorded(endDate);
-		return fitnessWeekService.getFitnessWeeksByFilter(filterByDates);
+		return fitnessWeekService.getInDateRange(startDate, endDate);
 	}
-	
+
 	@RequestMapping(value = FitnessWeekEndpointConstants.GET_BY_IDS, method = RequestMethod.GET)
-	public List<FitnessWeek> getByIds(@RequestParam List<Long> ids ) {
+	public List<FitnessWeek> getByIds(@RequestParam List<Long> ids) {
 		// get fitness weeks having ids given
 		// TODO: validation, see Spring AOP
-		FitnessWeekFilter filterByIds = new FitnessWeekFilter();
-		filterByIds.setIds(ids);
-		return fitnessWeekService.getFitnessWeeksByFilter(filterByIds);
+		return fitnessWeekService.getByIds(ids);
 	}
 
 	@RequestMapping(value = FitnessWeekEndpointConstants.GET_BY_EXERCISE_TYPE, method = RequestMethod.GET)
-	public List<FitnessWeek> getByExerciseType(@RequestParam List<String> exerciseTypes ) {
+	public List<FitnessWeek> getByExerciseType(@RequestParam List<String> exerciseTypes) {
 		// TODO: validation, see Spring AOP
-		FitnessWeekFilter filterByTypes = new FitnessWeekFilter();
-		filterByTypes.setExerciseTypes( exerciseTypes );
-		return fitnessWeekService.getFitnessWeeksByFilter(filterByTypes);
+		return fitnessWeekService.getByExerciseTypes(exerciseTypes);
 	}
 
 	@RequestMapping(value = FitnessWeekEndpointConstants.GET_WEEK, method = RequestMethod.GET)

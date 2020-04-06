@@ -1,5 +1,6 @@
 package com.djenkins.fitness.service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,23 +23,41 @@ public class FitnessWeekService {
 	}
 
 	public FitnessWeek createFitnessWeek(FitnessWeek fitnessWeek) {
-		return fitnessWeekRepo.save( fitnessWeek );
-		
+		return fitnessWeekRepo.save(fitnessWeek);
+
 	}
 
 	public FitnessWeek getFitnessWeekById(long weekId) {
 		Optional<FitnessWeek> result = fitnessWeekRepo.findById(weekId);
-		if ( result.isPresent() ) {
+		if (result.isPresent()) {
 			return result.get();
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
-	
-	public List<FitnessWeek> getFitnessWeeksByFilter( FitnessWeekFilter filter ){
-		List<FitnessWeek> results = fitnessWeekRepo.findAll( new FitnessWeekSpec( filter ) ); 
+
+	public List<FitnessWeek> getFitnessWeeksByFilter(FitnessWeekFilter filter) {
+		List<FitnessWeek> results = fitnessWeekRepo.findAll(new FitnessWeekSpec(filter));
 		return results;
-		
+
+	}
+
+	public List<FitnessWeek> getByExerciseTypes(List<String> types) {
+		FitnessWeekFilter filterByTypes = new FitnessWeekFilter();
+		filterByTypes.setExerciseTypes(types);
+		return getFitnessWeeksByFilter(filterByTypes);
+	}
+
+	public List<FitnessWeek> getByIds(List<Long> ids) {
+		FitnessWeekFilter filterByIds = new FitnessWeekFilter();
+		filterByIds.setIds(ids);
+		return getFitnessWeeksByFilter(filterByIds);
+	}
+
+	public List<FitnessWeek> getInDateRange(Date startDate, Date endDate) {
+		FitnessWeekFilter filterByDates = new FitnessWeekFilter();
+		filterByDates.setFromDateRecorded(startDate);
+		filterByDates.setToDateRecorded(endDate);
+		return getFitnessWeeksByFilter(filterByDates);
 	}
 }

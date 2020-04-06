@@ -58,6 +58,35 @@ public class TestFitnessWeekController {
 		verify(fitnessWeekServiceMock, times(1)).getAllFitnessWeek();
 		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
+
+	@Test
+	public void testGetWeekBySpecificId() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		FitnessWeek testResult = testDataResults.get(0);
+		Long id = testResult.getId();
+
+		when(fitnessWeekServiceMock.getFitnessWeekById(id)).thenReturn(testResult);
+		final String urlEndpoint = FitnessWeekEndpointConstants.GET_WEEK.replaceFirst("\\{id\\}", "" + id);
+		mockMvc.perform(get(urlEndpoint)).andExpect(status().isOk()).andExpect(jsonPath("$.id", is(id.intValue())))
+				.andExpect(jsonPath("$.totalTime", is(testResult.getTotalTime().intValue())))
+				.andExpect(jsonPath("$.totalMiles", is(testResult.getTotalMiles())))
+				.andExpect(jsonPath("$.totalCalories", is(testResult.getTotalCalories())))
+				.andExpect(jsonPath("$.milesToDate", is(testResult.getMilesToDate().intValue())))
+				.andExpect(jsonPath("$.daysExercised", is(testResult.getDaysExercised())))
+				.andExpect(jsonPath("$.dateRecorded", is(testResult.getDateRecorded().toString())))
+				.andExpect(jsonPath("$.exerciseType", is(testResult.getExerciseType())));
+
+		verify(fitnessWeekServiceMock, times(1)).getFitnessWeekById(id);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	// TODO: TEST GET BETWEEN DATES
 	
-	//TODO: test other endpoints
+	// TODO: TEST GET BETWEEN SAME DATE
+	
+	// TODO: TEST GET BY EXERCISE TYPES
+	
+	// TODO: TEST GET BY MULTIPLE IDS
+	
+	// TODO: TEST CREATE WEEK
 }
