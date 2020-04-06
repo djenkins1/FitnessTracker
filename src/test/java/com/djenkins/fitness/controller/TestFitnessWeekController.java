@@ -16,6 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.sql.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -58,7 +59,9 @@ public class TestFitnessWeekController {
 		when(fitnessWeekServiceMock.getAllFitnessWeek()).thenReturn(testDataResults);
 		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_ALL)).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$", hasSize(testDataResults.size()))).andExpect(jsonPath("$[0].id", is(1)));
+				.andExpect(jsonPath("$", hasSize(testDataResults.size())))
+				.andExpect(jsonPath("$[0].id", is(testDataResults.get(0).getId().intValue())));
+
 		// verify that the method was only called once
 		verify(fitnessWeekServiceMock, times(1)).getAllFitnessWeek();
 		verifyNoMoreInteractions(fitnessWeekServiceMock);
@@ -71,7 +74,7 @@ public class TestFitnessWeekController {
 		Long id = testResult.getId();
 
 		when(fitnessWeekServiceMock.getFitnessWeekById(id)).thenReturn(testResult);
-		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_WEEK , id)).andExpect(status().isOk())
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_WEEK, id)).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.id", is(id.intValue())))
 				.andExpect(jsonPath("$.totalTime", is(testResult.getTotalTime().intValue())))
@@ -110,20 +113,53 @@ public class TestFitnessWeekController {
 		ArgumentCaptor<FitnessWeek> captor = ArgumentCaptor.forClass(FitnessWeek.class);
 		verify(fitnessWeekServiceMock, times(1)).createFitnessWeek(captor.capture());
 	}
-	
-	// TODO: TEST GET BETWEEN DATES
-	
-	// TODO: TEST GET BY EXERCISE TYPES
 
-	// TODO: TEST GET BY MULTIPLE IDS
-	
-	
+	@Test
+	public void testGetBetweenDatesSuccess() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		when(fitnessWeekServiceMock.getInDateRange(Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(testDataResults);
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_IN_RANGE).param("startDate", "2020-02-20").param("endDate",
+				"2020-03-10")).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$", hasSize(testDataResults.size())))
+				.andExpect(jsonPath("$[0].id", is(testDataResults.get(0).getId().intValue())));
+
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(Date.class), Mockito.any(Date.class));
+	}
+
+	@Test
+	public void testGetByExerciseTypesSuccess() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		when(fitnessWeekServiceMock.getByExerciseTypes(Mockito.anyList())).thenReturn(testDataResults);
+		mockMvc.perform(
+				get(FitnessWeekEndpointConstants.GET_BY_EXERCISE_TYPE).param("exerciseTypes", "Cycling,Running"))
+				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$", hasSize(testDataResults.size())))
+				.andExpect(jsonPath("$[0].id", is(testDataResults.get(0).getId().intValue())));
+
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getByExerciseTypes(Mockito.anyList());
+	}
+
+	@Test
+	public void testGetByIdsSuccess() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		when(fitnessWeekServiceMock.getByIds(Mockito.anyList())).thenReturn(testDataResults);
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_BY_IDS).param("ids", "1,2,3")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$", hasSize(testDataResults.size())))
+				.andExpect(jsonPath("$[0].id", is(testDataResults.get(0).getId().intValue())));
+
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getByIds(Mockito.anyList());
+	}
 
 	// TODO: TEST CREATE WEEK WITH INVALID INPUTS
 
 	// TODO: TEST GET BETWEEN SAME DATE
-	//	this will return empty results for now, in future expected is non-empty
+	// this will return empty results for now, in future expected is non-empty
 
-
+	// TODO: TEST GET BETWEEN DATES WITH INVALID INPUTS
 
 }
