@@ -71,8 +71,7 @@ public class TestFitnessWeekController {
 		Long id = testResult.getId();
 
 		when(fitnessWeekServiceMock.getFitnessWeekById(id)).thenReturn(testResult);
-		final String urlEndpoint = FitnessWeekEndpointConstants.GET_WEEK.replaceFirst("\\{id\\}", "" + id);
-		mockMvc.perform(get(urlEndpoint)).andExpect(status().isOk())
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_WEEK , id)).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.id", is(id.intValue())))
 				.andExpect(jsonPath("$.totalTime", is(testResult.getTotalTime().intValue())))
@@ -111,15 +110,20 @@ public class TestFitnessWeekController {
 		ArgumentCaptor<FitnessWeek> captor = ArgumentCaptor.forClass(FitnessWeek.class);
 		verify(fitnessWeekServiceMock, times(1)).createFitnessWeek(captor.capture());
 	}
-
-	// TODO: TEST CREATE WEEK WITH INVALID INPUTS
-
+	
 	// TODO: TEST GET BETWEEN DATES
-
-	// TODO: TEST GET BETWEEN SAME DATE
-
+	
 	// TODO: TEST GET BY EXERCISE TYPES
 
 	// TODO: TEST GET BY MULTIPLE IDS
+	
+	
+
+	// TODO: TEST CREATE WEEK WITH INVALID INPUTS
+
+	// TODO: TEST GET BETWEEN SAME DATE
+	//	this will return empty results for now, in future expected is non-empty
+
+
 
 }
