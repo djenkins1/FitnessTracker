@@ -157,9 +157,6 @@ public class TestFitnessWeekController {
 
 	// TODO: TEST CREATE WEEK WITH INVALID INPUTS
 
-	// TODO: TEST GET BETWEEN SAME DATE
-	// this will return empty results for now, in future expected is non-empty
-
 	// TODO: TEST GET BETWEEN DATES WITH INVALID INPUTS
 
 }
