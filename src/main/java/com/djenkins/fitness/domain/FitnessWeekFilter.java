@@ -2,6 +2,7 @@ package com.djenkins.fitness.domain;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This class is meant to be used to keep filter criteria in order to filter the
@@ -75,5 +76,5 @@ public class FitnessWeekFilter {
 
 	public void setToDateRecorded(Date toDateRecorded) {
 		this.toDateRecorded = toDateRecorded;
-	}
+	}	
 }
