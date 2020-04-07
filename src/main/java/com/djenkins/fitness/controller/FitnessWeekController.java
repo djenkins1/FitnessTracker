@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.djenkins.fitness.domain.FitnessWeek;
+import com.djenkins.fitness.domain.FitnessWeekSum;
 import com.djenkins.fitness.service.FitnessWeekService;
 
 @RestController
@@ -61,7 +62,53 @@ public class FitnessWeekController {
 	public @ResponseBody FitnessWeek createFitnessWeek(@RequestBody FitnessWeek fitnessWeek) {
 		// TODO: validation, see Spring AOP
 		fitnessWeek.setCreatedTs(Timestamp.from(Instant.now()));
-		fitnessWeek.setId( null );//set to null in case passed into request
+		fitnessWeek.setId(null);// set to null in case passed into request
 		return fitnessWeekService.createFitnessWeek(fitnessWeek);
+	}
+
+	@RequestMapping(value = FitnessWeekEndpointConstants.SUM_ALL, method = RequestMethod.GET)
+	public @ResponseBody FitnessWeekSum sumAll() {
+		List<FitnessWeek> allWeeks = fitnessWeekService.getAllFitnessWeek();
+		FitnessWeekSum sumReturn = new FitnessWeekSum();
+		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(allWeeks));
+		sumReturn.setTotalMiles(fitnessWeekService.sumTotalMilesFor(allWeeks));
+		sumReturn.setTotalTime(fitnessWeekService.sumTotalTimeFor(allWeeks));
+		return sumReturn;
+	}
+
+	/**
+	 * @param startDate A date in the format of YYYY-MM-dd
+	 * @param endDate   A date in the format of YYYY-MM-dd
+	 * @return FitnessWeekSum object holding the sums for totalMiles,totalCalories
+	 *         and totalTime
+	 */
+	@RequestMapping(value = FitnessWeekEndpointConstants.SUM_IN_RANGE, method = RequestMethod.GET)
+	public FitnessWeekSum sumInRange(@RequestParam Date startDate, @RequestParam Date endDate) {
+		List<FitnessWeek> weeksInRange = fitnessWeekService.getInDateRange(startDate, endDate);
+		FitnessWeekSum sumReturn = new FitnessWeekSum();
+		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(weeksInRange));
+		sumReturn.setTotalMiles(fitnessWeekService.sumTotalMilesFor(weeksInRange));
+		sumReturn.setTotalTime(fitnessWeekService.sumTotalTimeFor(weeksInRange));
+		return sumReturn;
+	}
+
+	@RequestMapping(value = FitnessWeekEndpointConstants.SUM_BY_IDS, method = RequestMethod.GET)
+	public FitnessWeekSum sumByIds(@RequestParam List<Long> ids) {
+		List<FitnessWeek> weeksByIds = fitnessWeekService.getByIds(ids);
+		FitnessWeekSum sumReturn = new FitnessWeekSum();
+		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(weeksByIds));
+		sumReturn.setTotalMiles(fitnessWeekService.sumTotalMilesFor(weeksByIds));
+		sumReturn.setTotalTime(fitnessWeekService.sumTotalTimeFor(weeksByIds));
+		return sumReturn;
+	}
+
+	@RequestMapping(value = FitnessWeekEndpointConstants.SUM_BY_EXERCISE_TYPES, method = RequestMethod.GET)
+	public FitnessWeekSum sumByExerciseTypes(@RequestParam List<String> exerciseTypes) {
+		List<FitnessWeek> results = fitnessWeekService.getByExerciseTypes(exerciseTypes);
+		FitnessWeekSum sumReturn = new FitnessWeekSum();
+		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(results));
+		sumReturn.setTotalMiles(fitnessWeekService.sumTotalMilesFor(results));
+		sumReturn.setTotalTime(fitnessWeekService.sumTotalTimeFor(results));
+		return sumReturn;
 	}
 }

@@ -128,6 +128,7 @@ public class TestFitnessWeekController {
 		// verify that the method was only called once
 		ArgumentCaptor<FitnessWeek> captor = ArgumentCaptor.forClass(FitnessWeek.class);
 		verify(fitnessWeekServiceMock, times(1)).createFitnessWeek(captor.capture());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 
 	@Test
@@ -142,6 +143,7 @@ public class TestFitnessWeekController {
 
 		// verify that the method was only called once
 		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(Date.class), Mockito.any(Date.class));
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 
 	@Test
@@ -156,6 +158,7 @@ public class TestFitnessWeekController {
 
 		// verify that the method was only called once
 		verify(fitnessWeekServiceMock, times(1)).getByExerciseTypes(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 
 	@Test
@@ -169,6 +172,110 @@ public class TestFitnessWeekController {
 
 		// verify that the method was only called once
 		verify(fitnessWeekServiceMock, times(1)).getByIds(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumAll() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Double totalCalories = 20.0;
+		Double totalMiles = 10.0;
+		Long totalTime = 120L;
+		when(fitnessWeekServiceMock.getAllFitnessWeek()).thenReturn(testDataResults);
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList())).thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
+		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
+
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_ALL)).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.totalCalories", is(totalCalories)))
+				.andExpect(jsonPath("$.totalMiles", is(totalMiles)))
+				.andExpect(jsonPath("$.totalTime", is(totalTime.intValue())));
+
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getAllFitnessWeek();
+		verify(fitnessWeekServiceMock, times(1)).sumTotalCaloriesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(1)).sumTotalMilesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(1)).sumTotalTimeFor(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumInRangeSuccess() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Double totalCalories = 20.0;
+		Double totalMiles = 10.0;
+		Long totalTime = 120L;
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList())).thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
+		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
+		when(fitnessWeekServiceMock.getInDateRange(Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(testDataResults);
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_IN_RANGE).param("startDate", "2020-02-20").param("endDate",
+				"2020-03-10")).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.totalCalories", is(totalCalories)))
+				.andExpect(jsonPath("$.totalMiles", is(totalMiles)))
+				.andExpect(jsonPath("$.totalTime", is(totalTime.intValue())));
+
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(Date.class), Mockito.any(Date.class));
+		verify(fitnessWeekServiceMock, times(1)).sumTotalCaloriesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(1)).sumTotalMilesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(1)).sumTotalTimeFor(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumByIds() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Double totalCalories = 20.0;
+		Double totalMiles = 10.0;
+		Long totalTime = 120L;
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList())).thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
+		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
+		when(fitnessWeekServiceMock.getByIds(Mockito.anyList())).thenReturn(testDataResults);
+
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_BY_IDS).param("ids", "1,2,3"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.totalCalories", is(totalCalories)))
+				.andExpect(jsonPath("$.totalMiles", is(totalMiles)))
+				.andExpect(jsonPath("$.totalTime", is(totalTime.intValue())));
+
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getByIds(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(1)).sumTotalCaloriesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(1)).sumTotalMilesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(1)).sumTotalTimeFor(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumByExerciseTypes() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Double totalCalories = 20.0;
+		Double totalMiles = 10.0;
+		Long totalTime = 120L;
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList())).thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
+		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
+		when(fitnessWeekServiceMock.getByExerciseTypes(Mockito.anyList())).thenReturn(testDataResults);
+
+		mockMvc.perform(
+				get(FitnessWeekEndpointConstants.SUM_BY_EXERCISE_TYPES).param("exerciseTypes", "Cycling,Running"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.totalCalories", is(totalCalories)))
+				.andExpect(jsonPath("$.totalMiles", is(totalMiles)))
+				.andExpect(jsonPath("$.totalTime", is(totalTime.intValue())));
+
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getByExerciseTypes(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(1)).sumTotalCaloriesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(1)).sumTotalMilesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(1)).sumTotalTimeFor(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 
 	// TODO: TEST CREATE WEEK WITH INVALID INPUTS
