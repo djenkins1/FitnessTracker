@@ -26,7 +26,6 @@ public class FitnessWeekService {
 
 	public FitnessWeek createFitnessWeek(FitnessWeek fitnessWeek) {
 		return fitnessWeekRepo.save(fitnessWeek);
-
 	}
 
 	public FitnessWeek getFitnessWeekById(long weekId) {
@@ -41,7 +40,6 @@ public class FitnessWeekService {
 	public List<FitnessWeek> getFitnessWeeksByFilter(FitnessWeekFilter filter) {
 		List<FitnessWeek> results = fitnessWeekRepo.findAll(new FitnessWeekSpec(filter));
 		return results;
-
 	}
 
 	public List<FitnessWeek> getByExerciseTypes(List<String> types) {
@@ -61,5 +59,26 @@ public class FitnessWeekService {
 		filterByDates.setFromDateRecorded(startDate);
 		filterByDates.setToDateRecorded(endDate);
 		return getFitnessWeeksByFilter(filterByDates);
+	}
+	
+	public Double sumTotalCaloriesFor( List<FitnessWeek> weeks ) throws IllegalArgumentException {
+		if ( weeks == null || weeks.isEmpty() ) {
+			throw new IllegalArgumentException( "Parameter weeks must not be null or empty");
+		}
+		return weeks.stream().mapToDouble(o -> o.getTotalCalories()).sum();
+	}
+	
+	public Double sumTotalMilesFor( List<FitnessWeek> weeks )  throws IllegalArgumentException {
+		if ( weeks == null || weeks.isEmpty() ) {
+			throw new IllegalArgumentException( "Parameter weeks must not be null or empty");
+		}
+		return weeks.stream().mapToDouble(o -> o.getTotalMiles()).sum();
+	}
+	
+	public Long sumTotalTimeFor( List<FitnessWeek> weeks ) {
+		if ( weeks == null || weeks.isEmpty() ) {
+			throw new IllegalArgumentException( "Parameter weeks must not be null or empty");
+		}
+		return weeks.stream().mapToLong(o -> o.getTotalTime()).sum();
 	}
 }
