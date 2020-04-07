@@ -23,4 +23,7 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+	filter {
+		includeTestsMatching "com.djenkins.fitness.*";
+	}
 }
