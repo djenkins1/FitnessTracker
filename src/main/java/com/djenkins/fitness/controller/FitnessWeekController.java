@@ -18,11 +18,17 @@ import com.djenkins.fitness.domain.FitnessWeek;
 import com.djenkins.fitness.domain.FitnessWeekSum;
 import com.djenkins.fitness.service.FitnessWeekService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 @RestController
+@Api()
 public class FitnessWeekController {
 	@Autowired
 	private FitnessWeekService fitnessWeekService;
 
+	@ApiOperation("Returns list of all FitnessWeek in the system.")
 	@RequestMapping(value = FitnessWeekEndpointConstants.GET_ALL, method = RequestMethod.GET)
 	public List<FitnessWeek> getAll() {
 		return fitnessWeekService.getAllFitnessWeek();
@@ -34,40 +40,81 @@ public class FitnessWeekController {
 	 * @return List of FitnessWeek objects that have recordedDate between start date
 	 *         and end date
 	 */
+	@ApiOperation("Returns list of FitnessWeek that have recorded date within the date range given.")
 	@RequestMapping(value = FitnessWeekEndpointConstants.GET_IN_RANGE, method = RequestMethod.GET)
-	public List<FitnessWeek> getInRange(@RequestParam Date startDate, @RequestParam Date endDate) {
+	public List<FitnessWeek> getInRange(
+			@ApiParam("Start date of the date range to search for. Cannot be empty.")
+			@RequestParam
+			Date startDate,
+			@ApiParam("End date of the date range to search for. Cannot be empty.")
+			@RequestParam
+			Date endDate) {
 		// get fitness weeks with recordedDate between startDate and endDate
 		return fitnessWeekService.getInDateRange(startDate, endDate);
 	}
 
-	@RequestMapping(value = FitnessWeekEndpointConstants.GET_BY_IDS, method = RequestMethod.GET)
-	public List<FitnessWeek> getByIds(@RequestParam List<Long> ids) {
+	@ApiOperation("Returns list of FitnessWeek that have id within the list of ids given.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.GET_BY_IDS,
+			method = RequestMethod.GET,
+			produces = "application/json")
+	public List<FitnessWeek> getByIds(
+			@ApiParam("List of ids to search for. Cannot be empty.")
+			@RequestParam
+			List<Long> ids) {
 		// get fitness weeks having ids given
 		// TODO: validation, see Spring AOP
 		return fitnessWeekService.getByIds(ids);
 	}
 
-	@RequestMapping(value = FitnessWeekEndpointConstants.GET_BY_EXERCISE_TYPE, method = RequestMethod.GET)
-	public List<FitnessWeek> getByExerciseType(@RequestParam List<String> exerciseTypes) {
+	@ApiOperation("Returns list of FitnessWeek that have exercise type within the list of types given.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.GET_BY_EXERCISE_TYPE,
+			method = RequestMethod.GET,
+			produces = "application/json")
+	public List<FitnessWeek> getByExerciseType(
+			@ApiParam("List of exercise types to search for. Cannot be empty.")
+			@RequestParam
+			List<String> exerciseTypes) {
 		// TODO: validation, see Spring AOP
 		return fitnessWeekService.getByExerciseTypes(exerciseTypes);
 	}
 
-	@RequestMapping(value = FitnessWeekEndpointConstants.GET_WEEK, method = RequestMethod.GET)
-	public FitnessWeek getWeek(@PathVariable("id") long weekId) {
+	@ApiOperation("Returns a specific FitnessWeek based on the identifier given. Gives 404 error if does not exist.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.GET_WEEK,
+			method = RequestMethod.GET,
+			produces = "application/json")
+	public FitnessWeek getWeek(
+			@ApiParam("Id of the FitnessWeek to search for. Cannot be empty.")
+			@PathVariable("id")
+			long weekId) {
 		return fitnessWeekService.getFitnessWeekById(weekId);
 	}
 
-	@RequestMapping(value = FitnessWeekEndpointConstants.CREATE_WEEK, method = RequestMethod.POST)
-	public @ResponseBody FitnessWeek createFitnessWeek(@RequestBody FitnessWeek fitnessWeek) {
+	@ApiOperation("Creates a new FitnessWeek.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.CREATE_WEEK,
+			method = RequestMethod.POST,
+			produces = "application/json")
+	public @ResponseBody
+	FitnessWeek createFitnessWeek(
+			@ApiParam("Information for the new FitnessWeek to be created.")
+			@RequestBody
+			FitnessWeek fitnessWeek) {
 		// TODO: validation, see Spring AOP
 		fitnessWeek.setCreatedTs(Timestamp.from(Instant.now()));
 		fitnessWeek.setId(null);// set to null in case passed into request
 		return fitnessWeekService.createFitnessWeek(fitnessWeek);
 	}
 
-	@RequestMapping(value = FitnessWeekEndpointConstants.SUM_ALL, method = RequestMethod.GET)
-	public @ResponseBody FitnessWeekSum sumAll() {
+	@ApiOperation("Returns a FitnessWeekSum that contains the sum of total miles,total calories and total time of all FitnessWeek in the system.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.SUM_ALL,
+			method = RequestMethod.GET,
+			produces = "application/json")
+	public @ResponseBody
+	FitnessWeekSum sumAll() {
 		List<FitnessWeek> allWeeks = fitnessWeekService.getAllFitnessWeek();
 		FitnessWeekSum sumReturn = new FitnessWeekSum();
 		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(allWeeks));
@@ -82,8 +129,18 @@ public class FitnessWeekController {
 	 * @return FitnessWeekSum object holding the sums for totalMiles,totalCalories
 	 *         and totalTime
 	 */
-	@RequestMapping(value = FitnessWeekEndpointConstants.SUM_IN_RANGE, method = RequestMethod.GET)
-	public FitnessWeekSum sumInRange(@RequestParam Date startDate, @RequestParam Date endDate) {
+	@ApiOperation("Returns a FitnessWeekSum that contains the sum of total miles,total calories and total time of the FitnessWeek having recorded date with the date range given.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.SUM_IN_RANGE,
+			method = RequestMethod.GET,
+			produces = "application/json")
+	public FitnessWeekSum sumInRange(
+			@ApiParam("Start date of the date range to search for and sum. Cannot be empty.")
+			@RequestParam
+			Date startDate,
+			@ApiParam("End date of the date range to search for and sum. Cannot be empty.")
+			@RequestParam
+			Date endDate) {
 		List<FitnessWeek> weeksInRange = fitnessWeekService.getInDateRange(startDate, endDate);
 		FitnessWeekSum sumReturn = new FitnessWeekSum();
 		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(weeksInRange));
@@ -92,8 +149,15 @@ public class FitnessWeekController {
 		return sumReturn;
 	}
 
-	@RequestMapping(value = FitnessWeekEndpointConstants.SUM_BY_IDS, method = RequestMethod.GET)
-	public FitnessWeekSum sumByIds(@RequestParam List<Long> ids) {
+	@ApiOperation("Returns a FitnessWeekSum that contains the sum of total miles,total calories and total time of the FitnessWeek having id within the list of ids given.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.SUM_BY_IDS,
+			method = RequestMethod.GET,
+			produces = "application/json")
+	public FitnessWeekSum sumByIds(
+			@ApiParam("List of ids to search by and sum. Cannot be empty.")
+			@RequestParam
+			List<Long> ids) {
 		List<FitnessWeek> weeksByIds = fitnessWeekService.getByIds(ids);
 		FitnessWeekSum sumReturn = new FitnessWeekSum();
 		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(weeksByIds));
@@ -102,8 +166,15 @@ public class FitnessWeekController {
 		return sumReturn;
 	}
 
-	@RequestMapping(value = FitnessWeekEndpointConstants.SUM_BY_EXERCISE_TYPES, method = RequestMethod.GET)
-	public FitnessWeekSum sumByExerciseTypes(@RequestParam List<String> exerciseTypes) {
+	@ApiOperation("Returns a FitnessWeekSum that contains the sum of total miles,total calories and total time of the FitnessWeek having exercise type within the list of types given.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.SUM_BY_EXERCISE_TYPES,
+			method = RequestMethod.GET,
+			produces = "application/json")
+	public FitnessWeekSum sumByExerciseTypes(
+			@ApiParam("List of exercise types to search for and sum. Cannot be empty.")
+			@RequestParam
+			List<String> exerciseTypes) {
 		List<FitnessWeek> results = fitnessWeekService.getByExerciseTypes(exerciseTypes);
 		FitnessWeekSum sumReturn = new FitnessWeekSum();
 		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(results));

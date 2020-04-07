@@ -14,6 +14,7 @@ These instructions will get you a copy of the project up and running on your loc
 5. Run 'gradle bootRun' from the folder that the project is in.
 6. Navigate to this url in the browser: http://localhost:8080/rest/fitnessWeeks
 At this point you should see all the Fitness data from the database.
+See the following to explore documentation on other endpoints: http://localhost:8080/swagger-ui.html
 
 ### Prerequisites
 
@@ -36,6 +37,7 @@ TBD
 * [Spring-Boot](https://spring.io/projects/spring-boot)
 * [Spring-Data](https://spring.io/projects/spring-data)
 * [Gradle](https://docs.gradle.org/current/userguide/userguide.html) - Dependency Management
+* [SpringFox](https://springfox.github.io/springfox/docs/current/) - Swagger Documentation
 * [PostgreSQL](https://www.postgresql.org/docs/) - Database
 
 ## Authors
