@@ -16,6 +16,7 @@ task bundle(type: NpmTask, dependsOn: npmInstall) {
 }
  
 assemble.dependsOn(bundle)
+processResources.dependsOn(bundle)
 
 group = 'com.djenkins'
 version = '0.0.1-SNAPSHOT'
