@@ -1,5 +1,6 @@
 const React = require('react');
 import FitnessWeek from './fitness-week';
+
 class FitnessWeekList extends React.Component{
 	render() {
 		const weeks = this.props.weeks.map(week =>
@@ -9,9 +10,13 @@ class FitnessWeekList extends React.Component{
 			<table>
 				<tbody>
 					<tr>
+						<th>Date</th>
 						<th>Total Miles</th>
 						<th>Total Calories</th>
 						<th>Total Time</th>
+						<th>Miles To Date</th>
+						<th>Exercise Type</th>
+						<th>Days Exercised</th>
 					</tr>
 					{weeks}
 				</tbody>
