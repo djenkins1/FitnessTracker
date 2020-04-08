@@ -11,9 +11,8 @@ These instructions will get you a copy of the project up and running on your loc
 2. See Prerequisites for necessary software.
 3. Import the project into your IDE of choice.
 4. Import the database by running the fitness_db.sql file in PostgreSQL.
-5. Run 'gradle clean build' to build the application and the react components.
-6. Run 'gradle bootRun' from the folder that the project is in.
-7. Navigate to the url in browser: http://localhost:8080/
+5. Run 'gradle bootRun' from the folder that the project is in.
+6. Navigate to the url in browser: http://localhost:8080/
 At this point you should see all the Fitness data from the database.
 
 See the following to explore documentation on other endpoints: http://localhost:8080/swagger-ui.html
