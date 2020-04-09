@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import { XYPlot, LineSeries, LabelSeries, XAxis, YAxis } from 'react-vis';
+import { Container,Heading } from 'react-bulma-components';
 
 class FitnessWeekGraph extends Component {
 	render() {
-		const data = this.convertWeeksToData(this.props.weeks);
+		const data = this.convertWeeksToData(this.props.weeks, this.props.showBy );
 		const chartWidth = 600;
 		const chartHeight = 300;
 		const chartDomain = [0, 100];
 		return (
-			<div>
-				<h3>Total Miles</h3>
+			<Container>
+				<Heading>{this.props.title}</Heading>
 				<XYPlot
 					xType="time"
 					width={chartWidth}
@@ -20,23 +21,22 @@ class FitnessWeekGraph extends Component {
 					<YAxis />
 					<LineSeries data={data} />
 				</XYPlot>
-			</div>
+			</Container>
 		);
 	}
 
-	convertWeeksToData(weeks) {
+	convertWeeksToData(weeks, showBy) {
 		var toReturn = [];
 		var newWeekPoint;
 		weeks.sort(this.compare);
 		for (var i = 0; i < weeks.length; i++) {
 			newWeekPoint = {};
 			newWeekPoint.x = new Date(weeks[i].dateRecorded);
-			newWeekPoint.y = weeks[i].totalMiles;
-			newWeekPoint.label = weeks[i].totalMiles.toString();
+			newWeekPoint.y = weeks[i][ showBy ];
+			newWeekPoint.label = weeks[i][showBy].toString();
 			toReturn.push(newWeekPoint);
 		}
 
-		console.log(toReturn);
 		return toReturn;
 	}
 
