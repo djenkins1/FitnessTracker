@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { XYPlot, LineSeries, LabelSeries, XAxis, YAxis } from 'react-vis';
-import { Container,Heading } from 'react-bulma-components';
+import { Box, Heading } from 'react-bulma-components';
 
 class FitnessWeekGraph extends Component {
 	render() {
-		const data = this.convertWeeksToData(this.props.weeks, this.props.showBy );
-		const chartWidth = 600;
-		const chartHeight = 300;
-		const chartDomain = [0, 100];
+		const data = this.convertWeeksToData(this.props.weeks, this.props.showBy);
+		const chartWidth = 600;//TODO: pass this in as prop
+		const chartHeight = 300;//TODO: pass this in as prop
+		const chartDomain = [0, 100];//TODO: make this dynamic this based on data
 		return (
-			<Container>
+			<Box>
 				<Heading>{this.props.title}</Heading>
 				<XYPlot
 					xType="time"
@@ -21,7 +21,7 @@ class FitnessWeekGraph extends Component {
 					<YAxis />
 					<LineSeries data={data} />
 				</XYPlot>
-			</Container>
+			</Box>
 		);
 	}
 
@@ -32,7 +32,7 @@ class FitnessWeekGraph extends Component {
 		for (var i = 0; i < weeks.length; i++) {
 			newWeekPoint = {};
 			newWeekPoint.x = new Date(weeks[i].dateRecorded);
-			newWeekPoint.y = weeks[i][ showBy ];
+			newWeekPoint.y = weeks[i][showBy];
 			newWeekPoint.label = weeks[i][showBy].toString();
 			toReturn.push(newWeekPoint);
 		}
