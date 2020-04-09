@@ -5,20 +5,44 @@ import { Tabs, Container, Box } from 'react-bulma-components';
 class FitnessWeekGraphFilter extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { "showBy": this.props.showAttrs[0].attr, "title": this.props.showAttrs[0].title };
+		this.state = { "activeTab": 0, "showBy": this.props.showAttrs[0].attr, "title": this.props.showAttrs[0].title };
 	}
 	render() {
-		const tabs = this.props.showAttrs.map(attr =>
-			<Tabs.Tab key={attr.id} color="primary">{attr.title}</Tabs.Tab>
-		);
+		const tabs = this.convertAttrsToTabs(this.props.showAttrs);
 		return (
 			<Container>
 				<Tabs>
 					{tabs}
 				</Tabs>
-				<FitnessWeekGraph title={this.state.title} showBy={this.state.showBy} weeks={this.props.weeks} />
+				<FitnessWeekGraph chartWidth={600} chartHeight={300} title={this.state.title} showBy={this.state.showBy} weeks={this.props.weeks} />
 			</Container>
 		);
+	}
+	convertAttrsToTabs(attrs) {
+		var toReturn = [];
+		var attr;
+		for (var i = 0; i < attrs.length; i++) {
+			attr = attrs[i];
+			if (this.state.activeTab == attr.id) {
+				toReturn.push(
+					<Tabs.Tab onClick={this.changeShown.bind(this, i)} key={attr.id} active color="primary">{attr.title}</Tabs.Tab>
+				);
+			}
+			else {
+				toReturn.push(
+					<Tabs.Tab onClick={this.changeShown.bind(this, i)} key={attr.id} color="primary">{attr.title}</Tabs.Tab>
+				);
+			}
+		}
+		return toReturn;
+
+	}
+	changeShown(index, e) {
+		this.setState({
+			"activeTab": index,
+			"showBy": this.props.showAttrs[index].attr,
+			"title": this.props.showAttrs[index].title
+		});
 	}
 }
 

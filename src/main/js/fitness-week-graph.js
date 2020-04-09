@@ -5,16 +5,17 @@ import { Box, Heading } from 'react-bulma-components';
 class FitnessWeekGraph extends Component {
 	render() {
 		const data = this.convertWeeksToData(this.props.weeks, this.props.showBy);
-		const chartWidth = 600;//TODO: pass this in as prop
-		const chartHeight = 300;//TODO: pass this in as prop
-		const chartDomain = [0, 100];//TODO: make this dynamic this based on data
+		//find the largest value and add 25 percent to it for better visibility
+		const attr = this.props.showBy;
+		var largestValue = Math.max.apply(Math, this.props.weeks.map(function (o) { return o[attr]; }));
+		const chartDomain = [0, largestValue * 1.25];
 		return (
 			<Box>
 				<Heading>{this.props.title}</Heading>
 				<XYPlot
 					xType="time"
-					width={chartWidth}
-					height={chartHeight}
+					width={this.props.chartWidth}
+					height={this.props.chartHeight}
 					yDomain={chartDomain}
 				>
 					<XAxis />
@@ -47,8 +48,6 @@ class FitnessWeekGraph extends Component {
 
 		return 0;
 	}
-
-
 }
 
 export default FitnessWeekGraph
