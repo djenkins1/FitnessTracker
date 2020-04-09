@@ -1,7 +1,5 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
-import FitnessWeekTable from './fitness-week-table';
-import FitnessWeekGraphFilter from './fitness-week-graph-filter';
 import { Navbar } from "react-bulma-components";
 import {
 	BrowserRouter as Router,
@@ -9,6 +7,11 @@ import {
 	Route,
 	Link
 } from "react-router-dom";
+
+import FitnessWeekTable from './fitness-week-table';
+import FitnessWeekGraphFilter from './fitness-week-graph-filter';
+import FitnessWeekForm from "./fitness-week-form";
+
 
 class App extends React.Component {
 
@@ -50,10 +53,14 @@ class App extends React.Component {
 				<Navbar>
 					<Link to="/" className={"navbar-item has-background-primary"}>Home</Link>
 					<Link to="/graph" className={"navbar-item has-background-primary"}>Graph</Link>
+					<Link to="/create" className={"navbar-item has-background-primary"}>Add Week</Link>
 				</Navbar>
 				<Switch>
 					<Route path="/graph">
 						<FitnessWeekGraphFilter showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeeks} />
+					</Route>
+					<Route path="/create">
+						<FitnessWeekForm title="Add Week" />
 					</Route>
 					<Route path="/">
 						<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} />
