@@ -11,6 +11,7 @@ import {
 import FitnessWeekTable from './fitness-week-table';
 import FitnessWeekGraphFilter from './fitness-week-graph-filter';
 import FitnessWeekForm from "./fitness-week-form";
+import LoadingIcon from "./loading-icon";
 
 
 class App extends React.Component {
@@ -18,7 +19,7 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			fitnessWeeks: [], "graphAttrs": [
+			loading: true, fitnessWeeks: [], "graphAttrs": [
 				{
 					"id": 0,
 					"title": "Total Miles",
@@ -36,13 +37,17 @@ class App extends React.Component {
 				}
 			]
 		};
+
+		this.addWeek = this.addWeek.bind(this);
 	}
 
 	componentDidMount() {
+		this.setState({ "loading": true });
 		fetch('./rest/fitnessWeeks')
 			.then(res => res.json())
 			.then((data) => {
-				this.setState({ fitnessWeeks: data })
+				this.setState({ fitnessWeeks: data });
+				this.setState({ "loading": false });
 			})
 			.catch(console.log)
 	}
@@ -60,14 +65,21 @@ class App extends React.Component {
 						<FitnessWeekGraphFilter showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeeks} />
 					</Route>
 					<Route path="/create">
-						<FitnessWeekForm title="Add Week" />
+						<FitnessWeekForm title="Add Week" addWeek={this.addWeek} />
 					</Route>
 					<Route path="/">
 						<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} />
+						<LoadingIcon isShown={this.state.loading} />
 					</Route>
 				</Switch>
 			</Router>
-		)
+		);
+	}
+
+	addWeek(createdWeek) {
+		this.state.fitnessWeeks.push(createdWeek);
+		this.setState({ "loading": false });
+
 	}
 }
 
