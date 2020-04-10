@@ -14,9 +14,9 @@ class FitnessWeekTable extends React.Component {
 					<thead>
 						<tr>
 							<th>Date</th>
-							<th><abbr title="Total Miles">M</abbr></th>
-							<th><abbr title="Total Calories">C</abbr></th>
-							<th><abbr title="Total Time">T</abbr></th>
+							<th><abbr title="Total Miles">Miles</abbr></th>
+							<th><abbr title="Total Calories">Calories</abbr></th>
+							<th><abbr title="Total Time">Minutes</abbr></th>
 							<th><abbr title="Miles To Date">MTD</abbr></th>
 							<th><abbr title="Exercise Type">Type</abbr></th>
 							<th><abbr title="Days Exercised">Days</abbr></th>

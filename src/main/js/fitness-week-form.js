@@ -12,7 +12,15 @@ class FitnessWeekForm extends Component {
 			"totalMiles": 0,
 			"totalCalories": 0,
 			"milesToDate": 0,
-			"daysExercised": "",
+			"daysExercised": {
+				"monday": false,
+				"tuesday": false,
+				"wednesday": false,
+				"thursday": false,
+				"friday": false,
+				"saturday": false,
+				"sunday": false
+			},
 			"dateRecorded": "",
 			"exerciseType": "",
 			"redirect": false
@@ -66,7 +74,13 @@ class FitnessWeekForm extends Component {
 					<Form.Field>
 						<Form.Label>Days Exercised</Form.Label>
 						<Form.Control>
-							<Form.Input type="text" name="daysExercised" placeholder="M/T/W" value={this.state.daysExercised} onChange={this.handleInputChange} />
+							<Form.Checkbox name="monday" checked={this.state.daysExercised.monday} onChange={this.handleInputChange}>M</Form.Checkbox>
+							<Form.Checkbox name="tuesday" checked={this.state.daysExercised.tuesday} onChange={this.handleInputChange}>T</Form.Checkbox>
+							<Form.Checkbox name="wednesday" checked={this.state.daysExercised.wednesday} onChange={this.handleInputChange}>W</Form.Checkbox>
+							<Form.Checkbox name="thursday" checked={this.state.daysExercised.thursday} onChange={this.handleInputChange}>T</Form.Checkbox>
+							<Form.Checkbox name="friday" checked={this.state.daysExercised.friday} onChange={this.handleInputChange}>F</Form.Checkbox>
+							<Form.Checkbox name="saturday" checked={this.state.daysExercised.saturday} onChange={this.handleInputChange}>S</Form.Checkbox>
+							<Form.Checkbox name="sunday" checked={this.state.daysExercised.sunday} onChange={this.handleInputChange}>S</Form.Checkbox>
 						</Form.Control>
 					</Form.Field>
 					<Form.Field>
@@ -99,19 +113,54 @@ class FitnessWeekForm extends Component {
 		const target = event.target;
 		const value = target.value;
 		const name = target.name;
-		this.setState({
-			[name]: value
-		});
+		if (name in this.state.daysExercised) {
+			var daysExercised = { ...this.state.daysExercised }
+			daysExercised[name] = target.checked;
+			this.setState(
+				{
+					"daysExercised": daysExercised
+				}
+			);
+		}
+		else {
+			this.setState({
+				[name]: value
+			});
+		}
 	}
+
 
 	handleSubmit(event) {
 		event.preventDefault();
 		this.createWeek(event, this.state);
 	}
 
+	convertStateToFormData(stateData) {
+		var toReturn = {
+			"totalTime": stateData.totalTime,
+			"totalMiles": stateData.totalMiles,
+			"totalCalories": stateData.totalCalories,
+			"milesToDate": stateData.milesToDate,
+			"dateRecorded": stateData.dateRecorded,
+			"exerciseType": stateData.exerciseType
+		};
+
+		var dayStr = "";
+		var sep = "";
+		for (var key in stateData.daysExercised) {
+			if (stateData.daysExercised[key]) {
+				dayStr += sep + key[0].toUpperCase();
+				sep = "/";
+			}
+		}
+		toReturn["daysExercised"] = dayStr;
+		return toReturn;
+	}
+
 	createWeek(event, formData) {
 		this.setState({ "loading": true });
 		const url = "./rest/fitnessWeeks";
+		const newWeekData = this.convertStateToFormData(formData);
 		fetch(url, {
 			method: 'POST',
 			mode: 'cors',
@@ -122,7 +171,7 @@ class FitnessWeekForm extends Component {
 			},
 			redirect: 'error',
 			referrerPolicy: 'no-referrer',
-			body: JSON.stringify(formData)
+			body: JSON.stringify(newWeekData)
 		}).then(res => res.json())
 			.then((createdWeek) => {
 				this.props.addWeek(createdWeek);
