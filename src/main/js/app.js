@@ -39,6 +39,7 @@ class App extends React.Component {
 		};
 
 		this.addWeek = this.addWeek.bind(this);
+		this.sortWeeks = this.sortWeeks.bind(this);
 	}
 
 	componentDidMount() {
@@ -47,6 +48,7 @@ class App extends React.Component {
 			.then(res => res.json())
 			.then((data) => {
 				this.setState({ fitnessWeeks: data });
+				this.sortWeeks();
 				this.setState({ "loading": false });
 			})
 			.catch(console.log)
@@ -78,8 +80,19 @@ class App extends React.Component {
 
 	addWeek(createdWeek) {
 		this.state.fitnessWeeks.push(createdWeek);
+		this.sortWeeks();
 		this.setState({ "loading": false });
+	}
 
+	sortWeeks() {
+		this.state.fitnessWeeks.sort(this.compareWeeks);
+	}
+
+	compareWeeks(a, b) {
+		if (a.dateRecorded > b.dateRecorded) return 1;
+		if (b.dateRecorded > a.dateRecorded) return -1;
+
+		return 0;
 	}
 }
 

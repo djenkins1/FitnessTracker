@@ -29,7 +29,7 @@ class FitnessWeekGraph extends Component {
 	convertWeeksToData(weeks, showBy) {
 		var toReturn = [];
 		var newWeekPoint;
-		weeks.sort(this.compare);
+
 		for (var i = 0; i < weeks.length; i++) {
 			newWeekPoint = {};
 			newWeekPoint.x = new Date(weeks[i].dateRecorded);
@@ -39,14 +39,6 @@ class FitnessWeekGraph extends Component {
 		}
 
 		return toReturn;
-	}
-
-	//TODO: put this somewhere else like a util function
-	compare(a, b) {
-		if (a.dateRecorded > b.dateRecorded) return 1;
-		if (b.dateRecorded > a.dateRecorded) return -1;
-
-		return 0;
 	}
 }
 
