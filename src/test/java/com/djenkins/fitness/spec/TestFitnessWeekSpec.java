@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ import com.djenkins.fitness.repo.FitnessWeekRepository;
 import com.djenkins.fitness.util.DateTimeUtil;
 
 @SpringBootTest
+@Disabled
 public class TestFitnessWeekSpec {
 	@Autowired
 	private FitnessWeekRepository fitnessWeekRepo;
@@ -69,26 +71,26 @@ public class TestFitnessWeekSpec {
 		Date toDate = dateTimeUtil.getDateFromStringMDY("3/20/2020");
 		FitnessWeekFilter filter = new FitnessWeekFilter();
 		filter.setFromDateRecorded(fromDate);
-		filter.setToDateRecorded( toDate );
+		filter.setToDateRecorded(toDate);
 		List<FitnessWeek> results = fitnessWeekRepo.findAll(new FitnessWeekSpec(filter));
-		assertTrue( results.size() > 0 );
+		assertTrue(results.size() > 0);
 		for (FitnessWeek week : results) {
-			//verify that the date recorded is between fromDate and toDate
-			assertTrue( week.getDateRecorded().compareTo( fromDate ) >= 0 );
-			assertTrue( week.getDateRecorded().compareTo( toDate ) <= 0 );
-		}		
+			// verify that the date recorded is between fromDate and toDate
+			assertTrue(week.getDateRecorded().compareTo(fromDate) >= 0);
+			assertTrue(week.getDateRecorded().compareTo(toDate) <= 0);
+		}
 	}
 
 	@Test
 	public void testFilterByDaysExercised() {
-		FitnessWeekFilter filter =  new FitnessWeekFilter();
+		FitnessWeekFilter filter = new FitnessWeekFilter();
 		List<String> daysExercised = new ArrayList<>();
-		daysExercised.add( "W/T/F" );
+		daysExercised.add("W/T/F");
 		filter.setDaysExercised(daysExercised);
 		List<FitnessWeek> results = fitnessWeekRepo.findAll(new FitnessWeekSpec(filter));
-		assertTrue( results.size() > 0 );
+		assertTrue(results.size() > 0);
 		for (FitnessWeek week : results) {
-			assertTrue( daysExercised.contains( week.getDaysExercised() ) );
+			assertTrue(daysExercised.contains(week.getDaysExercised()));
 		}
 	}
 
