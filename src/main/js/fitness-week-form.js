@@ -22,7 +22,7 @@ class FitnessWeekForm extends Component {
 				"sunday": false
 			},
 			"dateRecorded": "",
-			"exerciseType": "",
+			"exerciseType": "Cycling",//default value
 			"redirect": false
 		};
 
