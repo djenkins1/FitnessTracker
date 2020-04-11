@@ -57,10 +57,18 @@ class App extends React.Component {
 	render() {
 		return (
 			<Router>
-				<Navbar>
-					<Link to="/" className={"navbar-item has-background-primary"}>Home</Link>
-					<Link to="/graph" className={"navbar-item has-background-primary"}>Graph</Link>
-					<Link to="/create" className={"navbar-item has-background-primary"}>Add Week</Link>
+				<Navbar color="info">
+					<Navbar.Brand>
+						<Navbar.Item renderAs="span">Fitness Tracker</Navbar.Item>
+						<Navbar.Burger data-target="navLinksMenu" />
+					</Navbar.Brand>
+					<Navbar.Menu className="is-active">
+						<Navbar.Container>
+							<Link className="navbar-item" to="/" >Home</Link>
+							<Link className="navbar-item" to="/graph" >Graph</Link>
+							<Link className="navbar-item" to="/create" >Add Week</Link>
+						</Navbar.Container>
+					</Navbar.Menu>
 				</Navbar>
 				<Switch>
 					<Route path="/graph">
