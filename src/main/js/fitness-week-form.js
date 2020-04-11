@@ -29,6 +29,7 @@ class FitnessWeekForm extends Component {
 		this.handleInputChange = this.handleInputChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleCancelClick = this.handleCancelClick.bind(this);
+		this.handleCalorieAddClick = this.handleCalorieAddClick.bind(this);
 	}
 
 	render() {
@@ -38,35 +39,39 @@ class FitnessWeekForm extends Component {
 			);
 		}
 
-		if (this.state.loading) {
-			return (
-				<LoadingIcon isShown={this.state.loading} />
-			);
-		}
 		return (
 			<Box>
 				<Heading>{this.props.title}</Heading>
 				<form onSubmit={this.handleSubmit}>
 					<Form.Field>
 						<Form.Label>Total Time(Minutes)</Form.Label>
+					</Form.Field>
+					<Form.Field kind="addons">
 						<Form.Control>
 							<Form.Input type="number" name="totalTime" placeholder="120" value={this.state.totalTime} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
 					<Form.Field>
 						<Form.Label>Total Miles</Form.Label>
+					</Form.Field>
+					<Form.Field kind="addons">
 						<Form.Control>
 							<Form.Input type="number" name="totalMiles" placeholder="20.5" value={this.state.totalMiles} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
 					<Form.Field>
 						<Form.Label>Total Calories</Form.Label>
+					</Form.Field>
+					<Form.Field kind="addons">
 						<Form.Control>
 							<Form.Input type="number" name="totalCalories" placeholder="250.25" value={this.state.totalCalories} onChange={this.handleInputChange} />
 						</Form.Control>
+						<Button color="info" onClick={this.handleCalorieAddClick}>+999.9</Button>
 					</Form.Field>
 					<Form.Field>
 						<Form.Label>Miles to Date</Form.Label>
+					</Form.Field>
+					<Form.Field kind="addons">
 						<Form.Control>
 							<Form.Input type="number" name="milesToDate" placeholder="1250" value={this.state.milesToDate} onChange={this.handleInputChange} />
 						</Form.Control>
@@ -85,19 +90,23 @@ class FitnessWeekForm extends Component {
 					</Form.Field>
 					<Form.Field>
 						<Form.Label>Exercise Type</Form.Label>
+					</Form.Field>
+					<Form.Field kind="addons">
 						<Form.Control>
 							<Form.Input type="text" name="exerciseType" placeholder="Cycling" value={this.state.exerciseType} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
 					<Form.Field>
 						<Form.Label>Date Recorded</Form.Label>
+					</Form.Field>
+					<Form.Field kind="addons">
 						<Form.Control>
 							<Form.Input type="date" name="dateRecorded" placeholder="2019-12-25" value={this.state.dateRecorded} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
 					<Form.Field kind="group">
 						<Form.Control>
-							<Button color="primary">Submit</Button>
+							<Button color="primary" loading={this.state.loading}>Submit</Button>
 						</Form.Control>
 						<Form.Control>
 							<Button onClick={this.handleCancelClick} color="danger">Cancel</Button>
@@ -127,6 +136,13 @@ class FitnessWeekForm extends Component {
 				[name]: value
 			});
 		}
+	}
+
+	handleCalorieAddClick(event) {
+		event.preventDefault();
+		this.setState({
+			"totalCalories": parseFloat(this.state.totalCalories.toString()) + 999.9
+		});
 	}
 
 
