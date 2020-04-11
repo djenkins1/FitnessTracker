@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Box, Heading, Form, Button } from 'react-bulma-components';
 import { Redirect } from 'react-router-dom';
-import LoadingIcon from './loading-icon';
 
 
 class FitnessWeekForm extends Component {

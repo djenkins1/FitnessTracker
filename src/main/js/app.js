@@ -11,7 +11,6 @@ import {
 import FitnessWeekTable from './fitness-week-table';
 import FitnessWeekGraphFilter from './fitness-week-graph-filter';
 import FitnessWeekForm from "./fitness-week-form";
-import LoadingIcon from "./loading-icon";
 
 
 class App extends React.Component {
