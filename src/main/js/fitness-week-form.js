@@ -48,7 +48,7 @@ class FitnessWeekForm extends Component {
 					</Form.Field>
 					<Form.Field kind="addons">
 						<Form.Control>
-							<Form.Input type="number" name="totalTime" placeholder="120" value={this.state.totalTime} onChange={this.handleInputChange} />
+							<Form.Input type="number" name="totalTime" min="0" placeholder="120" value={this.state.totalTime} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
 					<Form.Field>
@@ -56,7 +56,7 @@ class FitnessWeekForm extends Component {
 					</Form.Field>
 					<Form.Field kind="addons">
 						<Form.Control>
-							<Form.Input type="number" name="totalMiles" placeholder="20.5" value={this.state.totalMiles} onChange={this.handleInputChange} />
+							<Form.Input type="number" step="0.1" min="0" name="totalMiles" placeholder="20.5" value={this.state.totalMiles} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
 					<Form.Field>
@@ -64,7 +64,7 @@ class FitnessWeekForm extends Component {
 					</Form.Field>
 					<Form.Field kind="addons">
 						<Form.Control>
-							<Form.Input type="number" name="totalCalories" placeholder="250.25" value={this.state.totalCalories} onChange={this.handleInputChange} />
+							<Form.Input type="number" step="0.1" min="0" name="totalCalories" placeholder="250.25" value={this.state.totalCalories} onChange={this.handleInputChange} />
 						</Form.Control>
 						<Button color="info" onClick={this.handleCalorieAddClick}>+999.9</Button>
 					</Form.Field>
@@ -73,7 +73,7 @@ class FitnessWeekForm extends Component {
 					</Form.Field>
 					<Form.Field kind="addons">
 						<Form.Control>
-							<Form.Input type="number" name="milesToDate" placeholder="1250" value={this.state.milesToDate} onChange={this.handleInputChange} />
+							<Form.Input type="number" min="0" name="milesToDate" placeholder="1250" value={this.state.milesToDate} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
 					<Form.Field>
