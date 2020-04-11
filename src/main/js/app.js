@@ -79,7 +79,6 @@ class App extends React.Component {
 					</Route>
 					<Route path="/">
 						<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} />
-						<LoadingIcon isShown={this.state.loading} />
 					</Route>
 				</Switch>
 			</Router>
