@@ -6,7 +6,8 @@ class FitnessWeekDateFilter extends Component {
 		super(props);
 		this.state = {
 			"fromDate": this.props.startDate ? this.props.startDate : '',
-			"toDate": this.props.endDate ? this.props.endDate : ''
+			"toDate": this.props.endDate ? this.props.endDate : '',
+			"hasUserModified" : false
 		};
 		this.handleChangeDate = this.handleChangeDate.bind(this);
 		this.handleClickFilterButton = this.handleClickFilterButton.bind(this);
@@ -17,7 +18,7 @@ class FitnessWeekDateFilter extends Component {
 		const name = event.target.name;
 		const value = event.target.value;
 		if (name === "fromDate" || name === "toDate") {
-			this.setState({ [name]: value });
+			this.setState({ [name]: value, "hasUserModified" : true });
 		}
 		else {
 			console.log("handleChangeDate called for wrong input: " + name + " with value: " + value);
@@ -33,12 +34,13 @@ class FitnessWeekDateFilter extends Component {
 
 	componentWillReceiveProps(nextProps) {
 		//update the dates selected when the props change
-		if (nextProps.startDate !== this.state.fromDate) {
+		//do not change the state if the dates are already selected from user input
+		if ( !this.state.hasUserModified && nextProps.startDate !== this.state.fromDate) {
 			console.log("start date " + nextProps.startDate);
 			this.setState({ "fromDate": nextProps.startDate });
 		}
 
-		if (nextProps.endDate !== this.state.toDate) {
+		if ( !this.state.hasUserModified && nextProps.endDate !== this.state.toDate) {
 			console.log("end date " + nextProps.endDate);
 			this.setState({ "toDate": nextProps.endDate });
 		}
