@@ -49,7 +49,7 @@ class FitnessWeekDateFilter extends Component {
 
 	render() {
 		return (
-			<Container>
+			<Container className="spacedContainer">
 				<Form.Field kind="group">
 					<Form.Control>
 						<Form.Label>From </Form.Label>
