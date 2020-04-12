@@ -8,9 +8,10 @@ import {
 	Link
 } from "react-router-dom";
 
-import FitnessWeekTable from './fitness-week-table';
-import FitnessWeekGraphFilter from './fitness-week-graph-filter';
-import FitnessWeekForm from "./fitness-week-form";
+import FitnessWeekTable from './FitnessWeekTable';
+import FitnessWeekGraphFilter from './FitnessWeekGraphFilter';
+import FitnessWeekForm from "./FitnessWeekForm";
+import FitnessWeekDateFilter from "./FitnessWeekDateFilter";
 
 
 class App extends React.Component {
@@ -39,6 +40,8 @@ class App extends React.Component {
 
 		this.addWeek = this.addWeek.bind(this);
 		this.sortWeeks = this.sortWeeks.bind(this);
+		this.handleFilterDates = this.handleFilterDates.bind(this);
+		this.getDateFilterDetails = this.getDateFilterDetails.bind(this);
 	}
 
 	componentDidMount() {
@@ -50,10 +53,29 @@ class App extends React.Component {
 				this.sortWeeks();
 				this.setState({ "loading": false });
 			})
-			.catch(console.log)
+			.catch(console.log);
+	}
+
+	getDateFilterDetails() {
+		//this grabs the first and last fitness weeks to use as the default start and end dates
+		if (this.state.fitnessWeeks && this.state.fitnessWeeks.length > 0) {
+			const firstIndex = 0;
+			const lastIndex = this.state.fitnessWeeks.length - 1;
+			const startDate = this.state.fitnessWeeks[firstIndex].dateRecorded;
+			const endDate = this.state.fitnessWeeks[lastIndex].dateRecorded;
+			return {
+				"startDate": startDate,
+				"endDate": endDate
+			};
+		}
+		else {
+			return {};
+		}
+
 	}
 
 	render() {
+		const dateFilter = this.getDateFilterDetails();
 		return (
 			<Router>
 				<Navbar color="info">
@@ -64,14 +86,16 @@ class App extends React.Component {
 					<Navbar.Menu className="is-active">
 						<Navbar.Container>
 							<Link className="navbar-item" to="/" >Home</Link>
-							<Link className="navbar-item" to="/graph" >Graph</Link>
+							<Link className="navbar-item" to="/graph" >Monthly Graph</Link>
 							<Link className="navbar-item" to="/create" >Add Week</Link>
 						</Navbar.Container>
 					</Navbar.Menu>
 				</Navbar>
 				<Switch>
 					<Route path="/graph">
-						<FitnessWeekGraphFilter showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeeks} />
+						<FitnessWeekGraphFilter showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeeks}>
+							<FitnessWeekDateFilter {...dateFilter} onFilterDates={this.handleFilterDates} />
+						</FitnessWeekGraphFilter>
 					</Route>
 					<Route path="/create">
 						<FitnessWeekForm title="Add Week" addWeek={this.addWeek} />
@@ -99,6 +123,29 @@ class App extends React.Component {
 		if (b.dateRecorded > a.dateRecorded) return -1;
 
 		return 0;
+	}
+
+	handleFilterDates(startDate, endDate) {
+		this.setState({ "loading": true });
+		const url = './rest/fitnessWeeks/between?startDate=' + startDate + '&endDate=' + endDate;
+		fetch(url, {
+			method: 'GET',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'error',
+			referrerPolicy: 'no-referrer'
+		})
+			.then(res => res.json())
+			.then((data) => {
+				this.setState({ fitnessWeeks: data });
+				this.sortWeeks();
+				this.setState({ "loading": false });
+			})
+			.catch(console.log);
 	}
 }
 

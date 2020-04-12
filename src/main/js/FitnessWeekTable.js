@@ -1,5 +1,5 @@
 const React = require('react');
-import FitnessWeek from './fitness-week';
+import FitnessWeek from './FitnessWeek';
 import { Table, Heading, Container } from 'react-bulma-components';
 
 class FitnessWeekTable extends React.Component {

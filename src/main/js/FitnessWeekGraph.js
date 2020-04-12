@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { XYPlot, LineSeries, LabelSeries, XAxis, YAxis } from 'react-vis';
-import { Box, Heading } from 'react-bulma-components';
+import { Box, Heading, Container } from 'react-bulma-components';
 
 class FitnessWeekGraph extends Component {
 	render() {
@@ -10,7 +10,7 @@ class FitnessWeekGraph extends Component {
 		var largestValue = Math.max.apply(Math, this.props.weeks.map(function (o) { return o[attr]; }));
 		const chartDomain = [0, largestValue * 1.25];
 		return (
-			<Box>
+			<Container>
 				<Heading>{this.props.title}</Heading>
 				<XYPlot
 					xType="time"
@@ -22,7 +22,7 @@ class FitnessWeekGraph extends Component {
 					<YAxis />
 					<LineSeries data={data} />
 				</XYPlot>
-			</Box>
+			</Container>
 		);
 	}
 
