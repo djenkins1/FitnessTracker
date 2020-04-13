@@ -12,8 +12,9 @@ These instructions will get you a copy of the project up and running on your loc
 3. Import the project into your IDE of choice.
 4. Import the database by running the fitness_db.sql file in PostgreSQL.
 5. Run 'gradle bootRun' from the folder that the project is in.
-6. Navigate to this url in the browser: http://localhost:8080/rest/fitnessWeeks
+6. Navigate to the url in browser: http://localhost:8080/
 At this point you should see all the Fitness data from the database.
+
 See the following to explore documentation on other endpoints: http://localhost:8080/swagger-ui.html
 
 ### Prerequisites
@@ -21,6 +22,7 @@ See the following to explore documentation on other endpoints: http://localhost:
 * Gradle
 * Java
 * PostgreSQL
+* Node and npm
 * IDE of your choice
 
 ## Running the tests
@@ -39,6 +41,7 @@ TBD
 * [Gradle](https://docs.gradle.org/current/userguide/userguide.html) - Dependency Management
 * [SpringFox](https://springfox.github.io/springfox/docs/current/) - Swagger Documentation
 * [PostgreSQL](https://www.postgresql.org/docs/) - Database
+* [React](https://reactjs.org/docs/getting-started.html) - UI
 
 ## Authors
 

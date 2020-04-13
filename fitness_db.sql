@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS public.fitness_week;
 CREATE TABLE public.fitness_week
 (
   week_id bigint NOT NULL,
@@ -10,9 +11,10 @@ CREATE TABLE public.fitness_week
   exercise_type character varying(20),
   created_date timestamp without time zone,
   CONSTRAINT fitness_week_pkey PRIMARY KEY (week_id)
-)
+);
 
-CREATE SEQUENCE hibernate_sequence START 2;
+DROP SEQUENCE IF EXISTS hibernate_sequence;
+CREATE SEQUENCE hibernate_sequence START 1;
 
 -- Sample Data
 INSERT INTO fitness_week( week_id , total_time, total_miles , total_calories, miles_to_date, days_exercised , date_recorded, exercise_type, created_date )
