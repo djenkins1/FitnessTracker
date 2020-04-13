@@ -1,6 +1,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 import { Navbar } from "react-bulma-components";
+import Moment from 'moment';
 import {
 	BrowserRouter as Router,
 	Switch,
@@ -12,6 +13,7 @@ import FitnessWeekTable from './FitnessWeekTable';
 import FitnessWeekGraphFilter from './FitnessWeekGraphFilter';
 import FitnessWeekForm from "./FitnessWeekForm";
 import FitnessWeekDateFilter from "./FitnessWeekDateFilter";
+import FitnessWeekSumGraph from "./FitnessWeekSumGraph";
 
 
 class App extends React.Component {
@@ -42,18 +44,33 @@ class App extends React.Component {
 		this.sortWeeks = this.sortWeeks.bind(this);
 		this.handleFilterDates = this.handleFilterDates.bind(this);
 		this.getDateFilterDetails = this.getDateFilterDetails.bind(this);
+		this.getSumDataForDates = this.getSumDataForDates.bind(this);
 	}
 
 	componentDidMount() {
+		const defaultDates = this.getDefaultDatesForSum();
 		this.setState({ "loading": true });
 		fetch('./rest/fitnessWeeks')
 			.then(res => res.json())
 			.then((data) => {
 				this.setState({ fitnessWeeks: data });
 				this.sortWeeks();
-				this.setState({ "loading": false });
+				this.getSumDataForDates(defaultDates.startDate, defaultDates.endDate);
 			})
 			.catch(console.log);
+
+	}
+
+	getDefaultDatesForSum(){
+		const JANUARY = 0;//months start at 0
+		const DECEMBER = 11;//months start at 0
+		Moment.locale('en');//TODO: pull this out to some configuration?
+		const startOfYear = Moment(new Date(new Date().getFullYear(), JANUARY, 1)).format('YYYY-MM-DD');
+		const endOfYear = Moment(new Date(new Date().getFullYear(), DECEMBER, 31)).format('YYYY-MM-DD');
+		return {
+			"startDate" : startOfYear,
+			"endDate" : endOfYear
+		};
 	}
 
 	getDateFilterDetails() {
@@ -76,6 +93,7 @@ class App extends React.Component {
 
 	render() {
 		const dateFilter = this.getDateFilterDetails();
+		const defaultDatesForSum = this.getDefaultDatesForSum();
 		return (
 			<Router>
 				<Navbar color="info">
@@ -86,7 +104,8 @@ class App extends React.Component {
 					<Navbar.Menu className="is-active">
 						<Navbar.Container>
 							<Link className="navbar-item" to="/" >Home</Link>
-							<Link className="navbar-item" to="/graph" >Monthly Graph</Link>
+							<Link className="navbar-item" to="/graph" >Daily Graph</Link>
+							<Link className="navbar-item" to="/sumsAnnual" >Annual Report</Link>
 							<Link className="navbar-item" to="/create" >Add Week</Link>
 						</Navbar.Container>
 					</Navbar.Menu>
@@ -99,6 +118,11 @@ class App extends React.Component {
 					</Route>
 					<Route path="/create">
 						<FitnessWeekForm title="Add Week" addWeek={this.addWeek} />
+					</Route>
+					<Route path="/sumsAnnual">
+						<FitnessWeekSumGraph title="Annual Report" sumData={this.state.sumWeeks}>
+							<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumDataForDates} />
+						</FitnessWeekSumGraph>
 					</Route>
 					<Route path="/">
 						<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} />
@@ -123,6 +147,28 @@ class App extends React.Component {
 		if (b.dateRecorded > a.dateRecorded) return -1;
 
 		return 0;
+	}
+
+	getSumDataForDates(startDate, endDate) {
+		this.setState({ "loading": true });
+		const url = './rest/fitnessWeeks/sum/between?startDate=' + startDate + '&endDate=' + endDate;
+		fetch(url, {
+			method: 'GET',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'error',
+			referrerPolicy: 'no-referrer'
+		})
+			.then(res => res.json())
+			.then((data) => {
+				this.setState({ sumWeeks: data });
+				this.setState({ "loading": false });
+			})
+			.catch(console.log);
 	}
 
 	handleFilterDates(startDate, endDate) {
