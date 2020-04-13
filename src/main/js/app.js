@@ -93,7 +93,7 @@ class App extends React.Component {
 				</Navbar>
 				<Switch>
 					<Route path="/graph">
-						<FitnessWeekGraphFilter showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeeks}>
+						<FitnessWeekGraphFilter showByX="dateRecorded" showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeeks}>
 							<FitnessWeekDateFilter {...dateFilter} onFilterDates={this.handleFilterDates} />
 						</FitnessWeekGraphFilter>
 					</Route>

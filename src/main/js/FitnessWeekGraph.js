@@ -5,9 +5,9 @@ import { Box, Heading, Container, Notification } from 'react-bulma-components';
 class FitnessWeekGraph extends Component {
 	render() {
 		if (this.props.weeks && this.props.weeks.length > 0) {
-			const data = this.convertWeeksToData(this.props.weeks, this.props.showBy);
+			const data = this.convertWeeksToData(this.props.weeks, this.props.showByX, this.props.showByY );
 			//find the largest value and add 25 percent to it for better visibility
-			const attr = this.props.showBy;
+			const attr = this.props.showByY;
 			var largestValue = Math.max.apply(Math, this.props.weeks.map(function (o) { return o[attr]; }));
 			const chartDomain = [0, largestValue * 1.25];
 			return (
@@ -38,15 +38,15 @@ class FitnessWeekGraph extends Component {
 
 	}
 
-	convertWeeksToData(weeks, showBy) {
+	convertWeeksToData(weeks, xAttr, yAttr ) {
 		var toReturn = [];
 		var newWeekPoint;
 
 		for (var i = 0; i < weeks.length; i++) {
 			newWeekPoint = {};
-			newWeekPoint.x = new Date(weeks[i].dateRecorded);
-			newWeekPoint.y = weeks[i][showBy];
-			newWeekPoint.label = weeks[i][showBy].toString();
+			newWeekPoint.x = new Date(weeks[i][xAttr]);
+			newWeekPoint.y = weeks[i][yAttr];
+			newWeekPoint.label = weeks[i][yAttr].toString();
 			toReturn.push(newWeekPoint);
 		}
 
