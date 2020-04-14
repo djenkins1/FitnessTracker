@@ -16,6 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 
@@ -101,8 +102,10 @@ public class TestFitnessWeekController {
 		FitnessWeek testResult = testDataResults.get(0);
 		Long id = testResult.getId();
 
-		when(fitnessWeekServiceMock.getFitnessWeekById(id)).thenThrow(new EntityNotFoundException());
-		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_WEEK, id)).andExpect(status().isNotFound());
+		when(fitnessWeekServiceMock.getFitnessWeekById(id))
+				.thenThrow(new EntityNotFoundException());
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_WEEK, id))
+				.andExpect(status().isNotFound());
 
 		// verify that the method was only called once
 		verify(fitnessWeekServiceMock, times(1)).getFitnessWeekById(id);
@@ -115,8 +118,10 @@ public class TestFitnessWeekController {
 		FitnessWeek testResult = testDataResults.get(0);
 		FitnessWeek testInput = new FitnessWeekBuilder(testResult).withId(null).build();
 
-		when(fitnessWeekServiceMock.createFitnessWeek(Mockito.any(FitnessWeek.class))).thenReturn(testResult);
-		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK).contentType(MediaType.APPLICATION_JSON)
+		when(fitnessWeekServiceMock.createFitnessWeek(Mockito.any(FitnessWeek.class)))
+				.thenReturn(testResult);
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(testUtil.convertObjectToJsonBytes(testInput))).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.id", is(testResult.getId().intValue())))
@@ -137,25 +142,33 @@ public class TestFitnessWeekController {
 	@Test
 	public void testGetBetweenDatesSuccess() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
-		when(fitnessWeekServiceMock.getInDateRange(Mockito.any(LocalDate.class), Mockito.any(LocalDate.class)))
-				.thenReturn(testDataResults);
-		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_IN_RANGE).param("startDate", "2020-02-20").param("endDate",
-				"2020-03-10")).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		when(fitnessWeekServiceMock.getInDateRange(Mockito.any(LocalDate.class),
+				Mockito.any(LocalDate.class)))
+						.thenReturn(testDataResults);
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_IN_RANGE)
+				.param("startDate", "2020-02-20").param("endDate",
+						"2020-03-10"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$", hasSize(testDataResults.size())))
 				.andExpect(jsonPath("$[0].id", is(testDataResults.get(0).getId().intValue())));
 
 		// verify that the method was only called once
-		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(LocalDate.class), Mockito.any(LocalDate.class));
+		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(LocalDate.class),
+				Mockito.any(LocalDate.class));
 		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 
 	@Test
 	public void testGetByExerciseTypesSuccess() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
-		when(fitnessWeekServiceMock.getByExerciseTypes(Mockito.anyList())).thenReturn(testDataResults);
+		when(fitnessWeekServiceMock.getByExerciseTypes(Mockito.anyList()))
+				.thenReturn(testDataResults);
 		mockMvc.perform(
-				get(FitnessWeekEndpointConstants.GET_BY_EXERCISE_TYPE).param("exerciseTypes", "Cycling,Running"))
-				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				get(FitnessWeekEndpointConstants.GET_BY_EXERCISE_TYPE).param("exerciseTypes",
+						"Cycling,Running"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$", hasSize(testDataResults.size())))
 				.andExpect(jsonPath("$[0].id", is(testDataResults.get(0).getId().intValue())));
 
@@ -168,7 +181,8 @@ public class TestFitnessWeekController {
 	public void testGetByIdsSuccess() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
 		when(fitnessWeekServiceMock.getByIds(Mockito.anyList())).thenReturn(testDataResults);
-		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_BY_IDS).param("ids", "1,2,3")).andExpect(status().isOk())
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_BY_IDS).param("ids", "1,2,3"))
+				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$", hasSize(testDataResults.size())))
 				.andExpect(jsonPath("$[0].id", is(testDataResults.get(0).getId().intValue())));
@@ -179,13 +193,14 @@ public class TestFitnessWeekController {
 	}
 
 	@Test
-	public void testSumAll() throws Exception {
+	public void testSumAllSuccess() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
 		Double totalCalories = 20.0;
 		Double totalMiles = 10.0;
 		Long totalTime = 120L;
 		when(fitnessWeekServiceMock.getAllFitnessWeek()).thenReturn(testDataResults);
-		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList())).thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList()))
+				.thenReturn(totalCalories);
 		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
 		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
 
@@ -209,19 +224,25 @@ public class TestFitnessWeekController {
 		Double totalCalories = 20.0;
 		Double totalMiles = 10.0;
 		Long totalTime = 120L;
-		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList())).thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList()))
+				.thenReturn(totalCalories);
 		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
 		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
-		when(fitnessWeekServiceMock.getInDateRange(Mockito.any(LocalDate.class), Mockito.any(LocalDate.class)))
-				.thenReturn(testDataResults);
-		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_IN_RANGE).param("startDate", "2020-02-20").param("endDate",
-				"2020-03-10")).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		when(fitnessWeekServiceMock.getInDateRange(Mockito.any(LocalDate.class),
+				Mockito.any(LocalDate.class)))
+						.thenReturn(testDataResults);
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_IN_RANGE)
+				.param("startDate", "2020-02-20").param("endDate",
+						"2020-03-10"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.totalCalories", is(totalCalories)))
 				.andExpect(jsonPath("$.totalMiles", is(totalMiles)))
 				.andExpect(jsonPath("$.totalTime", is(totalTime.intValue())));
 
 		// verify that the method was only called once
-		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(LocalDate.class), Mockito.any(LocalDate.class));
+		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(LocalDate.class),
+				Mockito.any(LocalDate.class));
 		verify(fitnessWeekServiceMock, times(1)).sumTotalCaloriesFor(Mockito.anyList());
 		verify(fitnessWeekServiceMock, times(1)).sumTotalMilesFor(Mockito.anyList());
 		verify(fitnessWeekServiceMock, times(1)).sumTotalTimeFor(Mockito.anyList());
@@ -229,12 +250,13 @@ public class TestFitnessWeekController {
 	}
 
 	@Test
-	public void testSumByIds() throws Exception {
+	public void testSumByIdsSuccess() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
 		Double totalCalories = 20.0;
 		Double totalMiles = 10.0;
 		Long totalTime = 120L;
-		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList())).thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList()))
+				.thenReturn(totalCalories);
 		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
 		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
 		when(fitnessWeekServiceMock.getByIds(Mockito.anyList())).thenReturn(testDataResults);
@@ -255,18 +277,21 @@ public class TestFitnessWeekController {
 	}
 
 	@Test
-	public void testSumByExerciseTypes() throws Exception {
+	public void testSumByExerciseTypesSuccess() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
 		Double totalCalories = 20.0;
 		Double totalMiles = 10.0;
 		Long totalTime = 120L;
-		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList())).thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList()))
+				.thenReturn(totalCalories);
 		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
 		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
-		when(fitnessWeekServiceMock.getByExerciseTypes(Mockito.anyList())).thenReturn(testDataResults);
+		when(fitnessWeekServiceMock.getByExerciseTypes(Mockito.anyList()))
+				.thenReturn(testDataResults);
 
 		mockMvc.perform(
-				get(FitnessWeekEndpointConstants.SUM_BY_EXERCISE_TYPES).param("exerciseTypes", "Cycling,Running"))
+				get(FitnessWeekEndpointConstants.SUM_BY_EXERCISE_TYPES).param("exerciseTypes",
+						"Cycling,Running"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.totalCalories", is(totalCalories)))
@@ -278,6 +303,94 @@ public class TestFitnessWeekController {
 		verify(fitnessWeekServiceMock, times(1)).sumTotalCaloriesFor(Mockito.anyList());
 		verify(fitnessWeekServiceMock, times(1)).sumTotalMilesFor(Mockito.anyList());
 		verify(fitnessWeekServiceMock, times(1)).sumTotalTimeFor(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumByExerciseTypesNotFound() throws Exception {
+		List<FitnessWeek> emptyList = new ArrayList<>();
+		Double totalCalories = 20.0;
+		Double totalMiles = 10.0;
+		Long totalTime = 120L;
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList()))
+				.thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
+		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
+		when(fitnessWeekServiceMock.getByExerciseTypes(Mockito.anyList())).thenReturn(emptyList);
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_BY_EXERCISE_TYPES)
+				.param("exerciseTypes", "Cycling,Running")).andExpect(status().isNotFound());
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getByExerciseTypes(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(0)).sumTotalCaloriesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(0)).sumTotalMilesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(0)).sumTotalTimeFor(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumByIdsNotFound() throws Exception {
+		List<FitnessWeek> emptyList = new ArrayList<>();
+		Double totalCalories = 20.0;
+		Double totalMiles = 10.0;
+		Long totalTime = 120L;
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList()))
+				.thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
+		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
+		when(fitnessWeekServiceMock.getByIds(Mockito.anyList())).thenReturn(emptyList);
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_BY_IDS)
+				.param("ids", "1,2")).andExpect(status().isNotFound());
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getByIds(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(0)).sumTotalCaloriesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(0)).sumTotalMilesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(0)).sumTotalTimeFor(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumInRangeNotFound() throws Exception {
+		List<FitnessWeek> emptyList = new ArrayList<>();
+		Double totalCalories = 20.0;
+		Double totalMiles = 10.0;
+		Long totalTime = 120L;
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList()))
+				.thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
+		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
+		when(fitnessWeekServiceMock.getInDateRange(Mockito.any(LocalDate.class),
+				Mockito.any(LocalDate.class)))
+						.thenReturn(emptyList);
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_IN_RANGE)
+				.param("startDate", "2020-02-20").param("endDate",
+						"2020-03-10"))
+				.andExpect(status().isNotFound());
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(LocalDate.class),
+				Mockito.any(LocalDate.class));
+		verify(fitnessWeekServiceMock, times(0)).sumTotalCaloriesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(0)).sumTotalMilesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(0)).sumTotalTimeFor(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumAllWeeksNotFound() throws Exception {
+		List<FitnessWeek> emptyList = new ArrayList<>();
+		Double totalCalories = 20.0;
+		Double totalMiles = 10.0;
+		Long totalTime = 120L;
+		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList()))
+				.thenReturn(totalCalories);
+		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
+		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
+		when(fitnessWeekServiceMock.getAllFitnessWeek()).thenReturn(emptyList);
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_ALL)).andExpect(status().isNotFound());
+		// verify that the method was only called once
+		verify(fitnessWeekServiceMock, times(1)).getAllFitnessWeek();
+		verify(fitnessWeekServiceMock, times(0)).sumTotalCaloriesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(0)).sumTotalMilesFor(Mockito.anyList());
+		verify(fitnessWeekServiceMock, times(0)).sumTotalTimeFor(Mockito.anyList());
 		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 

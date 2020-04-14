@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RestController;
@@ -118,6 +120,10 @@ public class FitnessWeekController {
 	public @ResponseBody
 	FitnessWeekSum sumAll() {
 		List<FitnessWeek> allWeeks = fitnessWeekService.getAllFitnessWeek();
+		// if the list is empty than throw not found exception to get 404 error
+		if (allWeeks.isEmpty()) {
+			throw new EntityNotFoundException("Cannot calculate sums for all weeks.");
+		}
 		FitnessWeekSum sumReturn = new FitnessWeekSum();
 		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(allWeeks));
 		sumReturn.setTotalMiles(fitnessWeekService.sumTotalMilesFor(allWeeks));
@@ -146,6 +152,11 @@ public class FitnessWeekController {
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 			LocalDate endDate) {
 		List<FitnessWeek> weeksInRange = fitnessWeekService.getInDateRange(startDate, endDate);
+		// if the list is empty than throw not found exception to get 404 error
+		if (weeksInRange.isEmpty()) {
+			throw new EntityNotFoundException(
+					"Cannot calculate sums for date range: " + startDate + " and " + endDate);
+		}
 		FitnessWeekSum sumReturn = new FitnessWeekSum();
 		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(weeksInRange));
 		sumReturn.setTotalMiles(fitnessWeekService.sumTotalMilesFor(weeksInRange));
@@ -163,6 +174,10 @@ public class FitnessWeekController {
 			@RequestParam
 			List<Long> ids) {
 		List<FitnessWeek> weeksByIds = fitnessWeekService.getByIds(ids);
+		// if the list is empty than throw not found exception to get 404 error
+		if (weeksByIds.isEmpty()) {
+			throw new EntityNotFoundException("Cannot calculate sums for weeks with ids: " + ids);
+		}
 		FitnessWeekSum sumReturn = new FitnessWeekSum();
 		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(weeksByIds));
 		sumReturn.setTotalMiles(fitnessWeekService.sumTotalMilesFor(weeksByIds));
@@ -180,6 +195,11 @@ public class FitnessWeekController {
 			@RequestParam
 			List<String> exerciseTypes) {
 		List<FitnessWeek> results = fitnessWeekService.getByExerciseTypes(exerciseTypes);
+		// if the list is empty than throw not found exception to get 404 error
+		if (results.isEmpty()) {
+			throw new EntityNotFoundException(
+					"Cannot calculate sums for weeks with exercise types: " + exerciseTypes);
+		}
 		FitnessWeekSum sumReturn = new FitnessWeekSum();
 		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(results));
 		sumReturn.setTotalMiles(fitnessWeekService.sumTotalMilesFor(results));
