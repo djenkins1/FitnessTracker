@@ -8,6 +8,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,7 +62,7 @@ public class FitnessWeekController {
 	@RequestMapping(
 			value = FitnessWeekEndpointConstants.GET_BY_IDS,
 			method = RequestMethod.GET,
-			produces = "application/json")
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<FitnessWeek> getByIds(
 			@ApiParam("List of ids to search for. Cannot be empty.")
 			@RequestParam
@@ -75,7 +76,7 @@ public class FitnessWeekController {
 	@RequestMapping(
 			value = FitnessWeekEndpointConstants.GET_BY_EXERCISE_TYPE,
 			method = RequestMethod.GET,
-			produces = "application/json")
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<FitnessWeek> getByExerciseType(
 			@ApiParam("List of exercise types to search for. Cannot be empty.")
 			@RequestParam
@@ -88,7 +89,7 @@ public class FitnessWeekController {
 	@RequestMapping(
 			value = FitnessWeekEndpointConstants.GET_WEEK,
 			method = RequestMethod.GET,
-			produces = "application/json")
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public FitnessWeek getWeek(
 			@ApiParam("Id of the FitnessWeek to search for. Cannot be empty.")
 			@PathVariable("id")
@@ -100,7 +101,7 @@ public class FitnessWeekController {
 	@RequestMapping(
 			value = FitnessWeekEndpointConstants.CREATE_WEEK,
 			method = RequestMethod.POST,
-			produces = "application/json")
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
 	FitnessWeek createFitnessWeek(
 			@ApiParam("Information for the new FitnessWeek to be created.")
@@ -116,7 +117,7 @@ public class FitnessWeekController {
 	@RequestMapping(
 			value = FitnessWeekEndpointConstants.SUM_ALL,
 			method = RequestMethod.GET,
-			produces = "application/json")
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
 	FitnessWeekSum sumAll() {
 		List<FitnessWeek> allWeeks = fitnessWeekService.getAllFitnessWeek();
@@ -141,7 +142,7 @@ public class FitnessWeekController {
 	@RequestMapping(
 			value = FitnessWeekEndpointConstants.SUM_IN_RANGE,
 			method = RequestMethod.GET,
-			produces = "application/json")
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public FitnessWeekSum sumInRange(
 			@ApiParam("Start date of the date range to search for and sum. Cannot be empty.")
 			@RequestParam
@@ -168,7 +169,7 @@ public class FitnessWeekController {
 	@RequestMapping(
 			value = FitnessWeekEndpointConstants.SUM_BY_IDS,
 			method = RequestMethod.GET,
-			produces = "application/json")
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public FitnessWeekSum sumByIds(
 			@ApiParam("List of ids to search by and sum. Cannot be empty.")
 			@RequestParam
@@ -189,7 +190,7 @@ public class FitnessWeekController {
 	@RequestMapping(
 			value = FitnessWeekEndpointConstants.SUM_BY_EXERCISE_TYPES,
 			method = RequestMethod.GET,
-			produces = "application/json")
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public FitnessWeekSum sumByExerciseTypes(
 			@ApiParam("List of exercise types to search for and sum. Cannot be empty.")
 			@RequestParam
@@ -211,7 +212,7 @@ public class FitnessWeekController {
 	@RequestMapping(
 			value = FitnessWeekEndpointConstants.SUM_MONTHLY,
 			method = RequestMethod.GET,
-			produces = "application/json")
+			produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<FitnessWeekSum> monthlySumByDateRange(
 			@ApiParam("Start date of the date range to search for and sum. Cannot be empty.")
 			@RequestParam
