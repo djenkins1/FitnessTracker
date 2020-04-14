@@ -25,6 +25,7 @@ import javax.persistence.EntityNotFoundException;
 import static org.hamcrest.Matchers.*;
 
 import com.djenkins.fitness.domain.FitnessWeek;
+import com.djenkins.fitness.domain.FitnessWeekSum;
 import com.djenkins.fitness.factory.FitnessWeekBuilder;
 import com.djenkins.fitness.service.FitnessWeekService;
 import com.djenkins.fitness.util.FitnessWeekTestData;
@@ -391,6 +392,48 @@ public class TestFitnessWeekController {
 		verify(fitnessWeekServiceMock, times(0)).sumTotalCaloriesFor(Mockito.anyList());
 		verify(fitnessWeekServiceMock, times(0)).sumTotalMilesFor(Mockito.anyList());
 		verify(fitnessWeekServiceMock, times(0)).sumTotalTimeFor(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumMonthly() throws Exception {
+		Double totalCalories = 20.0;
+		Double totalMiles = 10.0;
+		Long totalTime = 120L;
+		String startDateStr = "2020-01-01";
+		String endDateStr = "2020-01-15";
+		List<FitnessWeekSum> sums = new ArrayList<>();
+		sums.add(new FitnessWeekSum(totalMiles, totalCalories, totalTime));
+		sums.get(0).setEndDate(LocalDate.parse(endDateStr));
+		sums.get(0).setStartDate(LocalDate.parse(startDateStr));
+		when(fitnessWeekServiceMock.sumMonthlyForDateRange(Mockito.any(), Mockito.any()))
+				.thenReturn(sums);
+
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_MONTHLY)
+				.param("startDate", startDateStr).param("endDate", endDateStr))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$", hasSize(sums.size())))
+				.andExpect(jsonPath("$[0].totalCalories", is(totalCalories)))
+				.andExpect(jsonPath("$[0].totalMiles", is(totalMiles)))
+				.andExpect(jsonPath("$[0].totalTime", is(totalTime.intValue())))
+				.andExpect(jsonPath("$[0].startDate", is(startDateStr)))
+				.andExpect(jsonPath("$[0].endDate", is(endDateStr)));
+		verify(fitnessWeekServiceMock, times(1)).sumMonthlyForDateRange(Mockito.any(),
+				Mockito.any());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumMonthlyNotFound() throws Exception {
+		List<FitnessWeekSum> emptyList = new ArrayList<>();
+		when(fitnessWeekServiceMock.sumMonthlyForDateRange(Mockito.any(), Mockito.any()))
+				.thenReturn(emptyList);
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_MONTHLY)
+				.param("startDate", "2020-01-01").param("endDate", "2020-03-01"))
+				.andExpect(status().isNotFound());
+		verify(fitnessWeekServiceMock, times(1)).sumMonthlyForDateRange(Mockito.any(),
+				Mockito.any());
 		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 

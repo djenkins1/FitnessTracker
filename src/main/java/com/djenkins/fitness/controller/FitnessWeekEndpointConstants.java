@@ -20,4 +20,6 @@ public class FitnessWeekEndpointConstants {
 	public static final String SUM_BY_IDS = "/rest/fitnessWeeks/sum/ids";
 	
 	public static final String SUM_BY_EXERCISE_TYPES = "/rest/fitnessWeeks/sum/exerciseTypes";	
+	
+	public static final String SUM_MONTHLY = "/rest/fitnessWeeks/sums";
 }

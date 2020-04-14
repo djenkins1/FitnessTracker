@@ -206,4 +206,29 @@ public class FitnessWeekController {
 		sumReturn.setTotalTime(fitnessWeekService.sumTotalTimeFor(results));
 		return sumReturn;
 	}
+
+	@ApiOperation("Returns a list of FitnessWeekSum that contains the sum of total miles,total calories and total time broken down by months.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.SUM_MONTHLY,
+			method = RequestMethod.GET,
+			produces = "application/json")
+	public List<FitnessWeekSum> monthlySumByDateRange(
+			@ApiParam("Start date of the date range to search for and sum. Cannot be empty.")
+			@RequestParam
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			LocalDate startDate,
+			@ApiParam("End date of the date range to search for and sum. Cannot be empty.")
+			@RequestParam
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			LocalDate endDate) {
+		List<FitnessWeekSum> results = fitnessWeekService.sumMonthlyForDateRange(startDate,
+				endDate);
+		if (results.isEmpty()) {
+			throw new EntityNotFoundException(
+					"Cannot calculate monthly sums for date ranges: " + startDate + " and "
+							+ endDate);
+		}
+		return results;
+
+	}
 }

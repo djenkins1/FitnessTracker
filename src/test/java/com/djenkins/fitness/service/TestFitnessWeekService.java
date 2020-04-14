@@ -26,6 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.djenkins.fitness.domain.FitnessWeek;
 import com.djenkins.fitness.domain.FitnessWeekFilter;
+import com.djenkins.fitness.domain.FitnessWeekSum;
 import com.djenkins.fitness.factory.FitnessWeekBuilder;
 import com.djenkins.fitness.repo.FitnessWeekRepository;
 import com.djenkins.fitness.util.FitnessWeekTestData;
@@ -69,7 +70,8 @@ public class TestFitnessWeekService {
 	@Test
 	public void testCreateFitnessWeek() {
 		// setup so that the repo.save method returns the first FitnessWeek in the list
-		when(mockedFitnessWeekRepo.save(Mockito.any(FitnessWeek.class))).thenReturn(allWeeks.get(0));
+		when(mockedFitnessWeekRepo.save(Mockito.any(FitnessWeek.class)))
+				.thenReturn(allWeeks.get(0));
 		FitnessWeek week = new FitnessWeekBuilder(allWeeks.get(0)).withId(null).build();
 		FitnessWeek createdWeek = fitnessWeekService.createFitnessWeek(week);
 		assertEquals(week.getDateRecorded(), createdWeek.getDateRecorded());
@@ -214,7 +216,8 @@ public class TestFitnessWeekService {
 		FitnessWeek firstWeek = allWeeks.get(0);
 		listOfOne.add(firstWeek);
 
-		assertEquals(firstWeek.getTotalCalories(), fitnessWeekService.sumTotalCaloriesFor(listOfOne));
+		assertEquals(firstWeek.getTotalCalories(),
+				fitnessWeekService.sumTotalCaloriesFor(listOfOne));
 		// verify that the repo was never called
 		verifyNoMoreInteractions(mockedFitnessWeekRepo);
 	}
@@ -328,6 +331,107 @@ public class TestFitnessWeekService {
 		assertEquals(firstWeek.getTotalTime() + secondWeek.getTotalTime(),
 				fitnessWeekService.sumTotalTimeFor(listOfMany));
 		// verify that the repo was never called
+		verifyNoMoreInteractions(mockedFitnessWeekRepo);
+	}
+
+	@Test
+	public void testSumMonthlyForDateRangeOneMonth() {
+		when(mockedFitnessWeekRepo.findAll(Mockito.any())).thenReturn(allWeeks);
+		String startDateStr = "2020-01-01";
+		String endDateStr = "2020-02-01";
+		List<FitnessWeekSum> results = fitnessWeekService.sumMonthlyForDateRange(
+				LocalDate.parse(startDateStr), LocalDate.parse(endDateStr));
+		FitnessWeekSum sum = new FitnessWeekSum(fitnessWeekService.sumTotalMilesFor(allWeeks),
+				fitnessWeekService.sumTotalCaloriesFor(allWeeks),
+				fitnessWeekService.sumTotalTimeFor(allWeeks));
+		assertEquals(1, results.size());
+		assertEquals(sum.getTotalCalories(), results.get(0).getTotalCalories());
+		assertEquals(sum.getTotalMiles(), results.get(0).getTotalMiles());
+		assertEquals(sum.getTotalTime(), results.get(0).getTotalTime());
+		assertEquals(startDateStr, results.get(0).getStartDate().toString());
+		assertEquals(endDateStr, results.get(0).getEndDate().toString());
+		// verify that the service only called the repo method once
+		verify(mockedFitnessWeekRepo, times(1)).findAll(Mockito.any());
+		verifyNoMoreInteractions(mockedFitnessWeekRepo);
+	}
+
+	@Test
+	public void testSumMonthlyForDateRangeTwoMonths() {
+		when(mockedFitnessWeekRepo.findAll(Mockito.any())).thenReturn(allWeeks);
+		String startDateStr = "2020-01-01";
+		String endDateStr = "2020-03-01";
+		List<FitnessWeekSum> results = fitnessWeekService.sumMonthlyForDateRange(
+				LocalDate.parse(startDateStr), LocalDate.parse(endDateStr));
+		FitnessWeekSum sum = new FitnessWeekSum(fitnessWeekService.sumTotalMilesFor(allWeeks),
+				fitnessWeekService.sumTotalCaloriesFor(allWeeks),
+				fitnessWeekService.sumTotalTimeFor(allWeeks));
+		assertEquals(2, results.size());
+		for (FitnessWeekSum currentSum : results) {
+			assertEquals(sum.getTotalCalories(), currentSum.getTotalCalories());
+			assertEquals(sum.getTotalMiles(), currentSum.getTotalMiles());
+			assertEquals(sum.getTotalTime(), currentSum.getTotalTime());
+		}
+		assertEquals(startDateStr, results.get(0).getStartDate().toString());
+		assertEquals(LocalDate.parse(startDateStr).plusMonths(1).toString(),
+				results.get(0).getEndDate().toString());
+		assertEquals(LocalDate.parse(startDateStr).plusMonths(1).toString(),
+				results.get(1).getStartDate().toString());
+		assertEquals(LocalDate.parse(endDateStr).toString(),
+				results.get(1).getEndDate().toString());
+		// verify that the service only called the repo method once
+		verify(mockedFitnessWeekRepo, times(2)).findAll(Mockito.any());
+		verifyNoMoreInteractions(mockedFitnessWeekRepo);
+	}
+
+	@Test
+	public void testSumMonthlyForDateRangeHalfMonth() {
+		// If end date is less than one month from start date than endDate should match
+		// and not be month later
+		when(mockedFitnessWeekRepo.findAll(Mockito.any())).thenReturn(allWeeks);
+		String startDateStr = "2020-01-01";
+		String endDateStr = "2020-01-15";
+		List<FitnessWeekSum> results = fitnessWeekService.sumMonthlyForDateRange(
+				LocalDate.parse(startDateStr), LocalDate.parse(endDateStr));
+		FitnessWeekSum sum = new FitnessWeekSum(fitnessWeekService.sumTotalMilesFor(allWeeks),
+				fitnessWeekService.sumTotalCaloriesFor(allWeeks),
+				fitnessWeekService.sumTotalTimeFor(allWeeks));
+		assertEquals(1, results.size());
+		assertEquals(sum.getTotalCalories(), results.get(0).getTotalCalories());
+		assertEquals(sum.getTotalMiles(), results.get(0).getTotalMiles());
+		assertEquals(sum.getTotalTime(), results.get(0).getTotalTime());
+		assertEquals(startDateStr, results.get(0).getStartDate().toString());
+		assertEquals(endDateStr, results.get(0).getEndDate().toString());
+		// verify that the service only called the repo method once
+		verify(mockedFitnessWeekRepo, times(1)).findAll(Mockito.any());
+		verifyNoMoreInteractions(mockedFitnessWeekRepo);
+	}
+
+	@Test
+	public void testSumMonthlyForDateRangeTwoMonthsPartway() {
+		when(mockedFitnessWeekRepo.findAll(Mockito.any())).thenReturn(allWeeks);
+		String startDateStr = "2020-01-01";
+		String endDateStr = "2020-02-15";
+		List<FitnessWeekSum> results = fitnessWeekService.sumMonthlyForDateRange(
+				LocalDate.parse(startDateStr), LocalDate.parse(endDateStr));
+		FitnessWeekSum sum = new FitnessWeekSum(fitnessWeekService.sumTotalMilesFor(allWeeks),
+				fitnessWeekService.sumTotalCaloriesFor(allWeeks),
+				fitnessWeekService.sumTotalTimeFor(allWeeks));
+		assertEquals(2, results.size());
+		for (FitnessWeekSum currentSum : results) {
+			assertEquals(sum.getTotalCalories(), currentSum.getTotalCalories());
+			assertEquals(sum.getTotalMiles(), currentSum.getTotalMiles());
+			assertEquals(sum.getTotalTime(), currentSum.getTotalTime());
+		}
+
+		assertEquals(startDateStr, results.get(0).getStartDate().toString());
+		assertEquals(LocalDate.parse(startDateStr).plusMonths(1).toString(),
+				results.get(0).getEndDate().toString());
+		assertEquals(LocalDate.parse(startDateStr).plusMonths(1).toString(),
+				results.get(1).getStartDate().toString());
+		assertEquals(LocalDate.parse(endDateStr).toString(),
+				results.get(1).getEndDate().toString());
+		// verify that the service only called the repo method once
+		verify(mockedFitnessWeekRepo, times(2)).findAll(Mockito.any());
 		verifyNoMoreInteractions(mockedFitnessWeekRepo);
 	}
 }
