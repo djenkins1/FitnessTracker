@@ -9,8 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.sql.Date;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +28,6 @@ import com.djenkins.fitness.domain.FitnessWeek;
 import com.djenkins.fitness.domain.FitnessWeekFilter;
 import com.djenkins.fitness.factory.FitnessWeekBuilder;
 import com.djenkins.fitness.repo.FitnessWeekRepository;
-import com.djenkins.fitness.util.DateTimeUtil;
 import com.djenkins.fitness.util.FitnessWeekTestData;
 
 @SpringBootTest
@@ -38,9 +37,6 @@ public class TestFitnessWeekService {
 
 	@Autowired
 	FitnessWeekService fitnessWeekService;
-
-	@Autowired
-	DateTimeUtil dateTimeUtil;
 
 	@MockBean
 	FitnessWeekRepository mockedFitnessWeekRepo;
@@ -175,8 +171,8 @@ public class TestFitnessWeekService {
 
 	@Test
 	public void testGetInDateRange() {
-		Date fromDate = allWeeks.get(0).getDateRecorded();
-		Date toDate = allWeeks.get(2).getDateRecorded();
+		LocalDate fromDate = allWeeks.get(0).getDateRecorded();
+		LocalDate toDate = allWeeks.get(2).getDateRecorded();
 		assertTrue(fromDate.compareTo(toDate) < 0);
 
 		when(mockedFitnessWeekRepo.findAll(Mockito.any())).thenReturn(allWeeks);

@@ -1,6 +1,6 @@
 package com.djenkins.fitness.service;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +54,7 @@ public class FitnessWeekService {
 		return getFitnessWeeksByFilter(filterByIds);
 	}
 
-	public List<FitnessWeek> getInDateRange(Date startDate, Date endDate) {
+	public List<FitnessWeek> getInDateRange(LocalDate startDate, LocalDate endDate) {
 		FitnessWeekFilter filterByDates = new FitnessWeekFilter();
 		filterByDates.setFromDateRecorded(startDate);
 		filterByDates.setToDateRecorded(endDate);

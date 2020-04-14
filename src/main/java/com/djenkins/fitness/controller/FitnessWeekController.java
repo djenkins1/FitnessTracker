@@ -1,11 +1,11 @@
 package com.djenkins.fitness.controller;
 
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,10 +45,12 @@ public class FitnessWeekController {
 	public List<FitnessWeek> getInRange(
 			@ApiParam("Start date of the date range to search for. Cannot be empty.")
 			@RequestParam
-			Date startDate,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			LocalDate startDate,
 			@ApiParam("End date of the date range to search for. Cannot be empty.")
 			@RequestParam
-			Date endDate) {
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			LocalDate endDate) {
 		// get fitness weeks with recordedDate between startDate and endDate
 		return fitnessWeekService.getInDateRange(startDate, endDate);
 	}
@@ -103,7 +105,7 @@ public class FitnessWeekController {
 			@RequestBody
 			FitnessWeek fitnessWeek) {
 		// TODO: validation, see Spring AOP
-		fitnessWeek.setCreatedTs(Timestamp.from(Instant.now()));
+		fitnessWeek.setCreatedTs(Instant.now());
 		fitnessWeek.setId(null);// set to null in case passed into request
 		return fitnessWeekService.createFitnessWeek(fitnessWeek);
 	}
@@ -137,10 +139,12 @@ public class FitnessWeekController {
 	public FitnessWeekSum sumInRange(
 			@ApiParam("Start date of the date range to search for and sum. Cannot be empty.")
 			@RequestParam
-			Date startDate,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			LocalDate startDate,
 			@ApiParam("End date of the date range to search for and sum. Cannot be empty.")
 			@RequestParam
-			Date endDate) {
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			LocalDate endDate) {
 		List<FitnessWeek> weeksInRange = fitnessWeekService.getInDateRange(startDate, endDate);
 		FitnessWeekSum sumReturn = new FitnessWeekSum();
 		sumReturn.setTotalCalories(fitnessWeekService.sumTotalCaloriesFor(weeksInRange));

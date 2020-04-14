@@ -1,7 +1,7 @@
 package com.djenkins.fitness.factory;
 
-import java.sql.Date;
-import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
 
 import com.djenkins.fitness.domain.FitnessWeek;
 
@@ -58,13 +58,13 @@ public class FitnessWeekBuilder {
 		return this;
 	}
 
-	public FitnessWeekBuilder withDateRecorded(Date dateRecorded) {
+	public FitnessWeekBuilder withDateRecorded(LocalDate dateRecorded) {
 		this.fitnessWeek.setDateRecorded(dateRecorded);
 		return this;
 	}
 
-	public FitnessWeekBuilder withCreatedTs(Timestamp createdTs) {
-		this.fitnessWeek.setCreatedTs(createdTs);
+	public FitnessWeekBuilder withCreatedTs(Instant instant) {
+		this.fitnessWeek.setCreatedTs(instant);
 		return this;
 	}
 

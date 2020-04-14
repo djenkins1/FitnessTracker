@@ -1,7 +1,7 @@
 package com.djenkins.fitness.domain;
 
-import java.sql.Date;
-import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +9,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -73,7 +77,9 @@ public class FitnessWeek {
 			required = true,
 			position = 6)
 	@Column(name = "date_recorded")
-	private Date dateRecorded;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+	private LocalDate dateRecorded;
 
 	@ApiModelProperty(
 			notes = "The type of exercise done this week.",
@@ -89,7 +95,9 @@ public class FitnessWeek {
 			required = false,
 			position = 8)
 	@Column(name = "created_date")
-	private Timestamp createdTs;
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+	private Instant createdTs;
 
 	public Long getId() {
 		return id;
@@ -139,11 +147,11 @@ public class FitnessWeek {
 		this.daysExercised = daysExercised;
 	}
 
-	public Date getDateRecorded() {
+	public LocalDate getDateRecorded() {
 		return dateRecorded;
 	}
 
-	public void setDateRecorded(Date dateRecorded) {
+	public void setDateRecorded(LocalDate dateRecorded) {
 		this.dateRecorded = dateRecorded;
 	}
 
@@ -155,11 +163,11 @@ public class FitnessWeek {
 		this.exerciseType = exerciseType;
 	}
 
-	public Timestamp getCreatedTs() {
+	public Instant getCreatedTs() {
 		return createdTs;
 	}
 
-	public void setCreatedTs(Timestamp createdTs) {
+	public void setCreatedTs(Instant createdTs) {
 		this.createdTs = createdTs;
 	}
 

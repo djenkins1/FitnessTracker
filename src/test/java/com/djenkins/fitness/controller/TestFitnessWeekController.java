@@ -16,8 +16,8 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.sql.Date;
 import java.util.List;
+import java.time.LocalDate;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -44,6 +44,9 @@ public class TestFitnessWeekController {
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
+
+	@Autowired
+	private TestUtil testUtil;
 
 	@BeforeEach
 	public void setUp() {
@@ -114,7 +117,7 @@ public class TestFitnessWeekController {
 
 		when(fitnessWeekServiceMock.createFitnessWeek(Mockito.any(FitnessWeek.class))).thenReturn(testResult);
 		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK).contentType(MediaType.APPLICATION_JSON)
-				.content(TestUtil.convertObjectToJsonBytes(testInput))).andExpect(status().isOk())
+				.content(testUtil.convertObjectToJsonBytes(testInput))).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.id", is(testResult.getId().intValue())))
 				.andExpect(jsonPath("$.totalTime", is(testResult.getTotalTime().intValue())))
@@ -134,7 +137,7 @@ public class TestFitnessWeekController {
 	@Test
 	public void testGetBetweenDatesSuccess() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
-		when(fitnessWeekServiceMock.getInDateRange(Mockito.any(Date.class), Mockito.any(Date.class)))
+		when(fitnessWeekServiceMock.getInDateRange(Mockito.any(LocalDate.class), Mockito.any(LocalDate.class)))
 				.thenReturn(testDataResults);
 		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_IN_RANGE).param("startDate", "2020-02-20").param("endDate",
 				"2020-03-10")).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -142,7 +145,7 @@ public class TestFitnessWeekController {
 				.andExpect(jsonPath("$[0].id", is(testDataResults.get(0).getId().intValue())));
 
 		// verify that the method was only called once
-		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(Date.class), Mockito.any(Date.class));
+		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(LocalDate.class), Mockito.any(LocalDate.class));
 		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 
@@ -209,7 +212,7 @@ public class TestFitnessWeekController {
 		when(fitnessWeekServiceMock.sumTotalCaloriesFor(Mockito.anyList())).thenReturn(totalCalories);
 		when(fitnessWeekServiceMock.sumTotalMilesFor(Mockito.anyList())).thenReturn(totalMiles);
 		when(fitnessWeekServiceMock.sumTotalTimeFor(Mockito.anyList())).thenReturn(totalTime);
-		when(fitnessWeekServiceMock.getInDateRange(Mockito.any(Date.class), Mockito.any(Date.class)))
+		when(fitnessWeekServiceMock.getInDateRange(Mockito.any(LocalDate.class), Mockito.any(LocalDate.class)))
 				.thenReturn(testDataResults);
 		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_IN_RANGE).param("startDate", "2020-02-20").param("endDate",
 				"2020-03-10")).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -218,7 +221,7 @@ public class TestFitnessWeekController {
 				.andExpect(jsonPath("$.totalTime", is(totalTime.intValue())));
 
 		// verify that the method was only called once
-		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(Date.class), Mockito.any(Date.class));
+		verify(fitnessWeekServiceMock, times(1)).getInDateRange(Mockito.any(LocalDate.class), Mockito.any(LocalDate.class));
 		verify(fitnessWeekServiceMock, times(1)).sumTotalCaloriesFor(Mockito.anyList());
 		verify(fitnessWeekServiceMock, times(1)).sumTotalMilesFor(Mockito.anyList());
 		verify(fitnessWeekServiceMock, times(1)).sumTotalTimeFor(Mockito.anyList());
