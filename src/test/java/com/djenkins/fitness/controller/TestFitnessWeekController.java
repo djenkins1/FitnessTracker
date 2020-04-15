@@ -18,13 +18,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
-import java.text.ParseException;
 import java.time.LocalDate;
 
 import javax.persistence.EntityNotFoundException;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import com.djenkins.fitness.domain.FitnessWeek;
 import com.djenkins.fitness.domain.FitnessWeekSum;
@@ -513,7 +511,7 @@ public class TestFitnessWeekController {
 	}
 
 	// TODO: TEST CREATE WEEK WITH INVALID INPUTS
-	
+
 	// TODO: TEST CREATE WEEKS WITH INVALID INPUTS
 
 	// TODO: TEST GET BETWEEN DATES WITH INVALID INPUTS
