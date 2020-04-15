@@ -5,10 +5,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +27,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+@Validated
 @RestController
 @Api()
 public class FitnessWeekController {
@@ -117,7 +120,7 @@ public class FitnessWeekController {
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
 	FitnessWeek updateFitnessWeek(@ApiParam("Information for the FitnessWeek to be updated.")
-	FitnessWeek fitnessWeek) {
+	@RequestBody @Valid FitnessWeek fitnessWeek) {
 		return fitnessWeekService.updateFitnessWeek(fitnessWeek);
 	}
 
@@ -130,7 +133,7 @@ public class FitnessWeekController {
 	Iterable<FitnessWeek> createFitnessWeeks(
 			@ApiParam("Information for the new FitnessWeek objects to be created.")
 			@RequestBody
-			List<FitnessWeek> fitnessWeeks) {
+			@Valid List<FitnessWeek> fitnessWeeks) {
 		// TODO: validation, see Spring AOP
 		for (FitnessWeek week : fitnessWeeks) {
 			week.setCreatedTs(Instant.now());
@@ -148,7 +151,7 @@ public class FitnessWeekController {
 	FitnessWeek createFitnessWeek(
 			@ApiParam("Information for the new FitnessWeek to be created.")
 			@RequestBody
-			FitnessWeek fitnessWeek) {
+			@Valid FitnessWeek fitnessWeek) {
 		// TODO: validation, see Spring AOP
 		fitnessWeek.setCreatedTs(Instant.now());
 		fitnessWeek.setId(null);// set to null in case passed into request

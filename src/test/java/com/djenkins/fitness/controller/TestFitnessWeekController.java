@@ -23,6 +23,8 @@ import java.time.LocalDate;
 import javax.persistence.EntityNotFoundException;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.djenkins.fitness.domain.FitnessWeek;
 import com.djenkins.fitness.domain.FitnessWeekSum;
@@ -510,7 +512,188 @@ public class TestFitnessWeekController {
 		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 
-	// TODO: TEST CREATE WEEK WITH INVALID INPUTS
+	@Test
+	public void testCreateWeek_Fail_dateRecordedInFuture() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		LocalDate futureDate = LocalDate.now().plusDays(1L);
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withDateRecorded(futureDate).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_dateRecordedNull() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withDateRecorded(null).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_exerciseTypeBlank() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		String badExerciseType = "";
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withExerciseType(badExerciseType).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_exerciseTypeTooLarge() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		String badExerciseType = "ABCDEFGHIJ" + "LMNOPQRSTU" + "V";
+		assertEquals(21, badExerciseType.length());
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withExerciseType(badExerciseType).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_daysExercisedBlank() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		String badDaysExercised = "";
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withDaysExercised(badDaysExercised).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_daysExercisedTooLarge() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		String badDaysExercised = "ABCDEFGHIJ" + "LMNOPQRSTU" + "V";
+		assertEquals(21, badDaysExercised.length());
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withDaysExercised(badDaysExercised).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_milesToDateNegative() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Long badMilesToDate = -1L;
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withMilesToDate(badMilesToDate).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_milesToDateNull() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Long badMilesToDate = null;
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withMilesToDate(badMilesToDate).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_totalTimeNegative() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Long badTotalTime = -1L;
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withTotalTime(badTotalTime).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_totalTimeNull() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Long badTotalTime = null;
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withTotalTime(badTotalTime).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_totalMilesNegative() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Double badTotalMiles = -1.0;
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withTotalMiles(badTotalMiles).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_totalMilesNull() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Double badTotalMiles = null;
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withTotalMiles(badTotalMiles).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_totalCaloriesNegative() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Double badTotalCalories = -1.0;
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withTotalCalories(badTotalCalories).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_totalCaloriesNull() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		Double badTotalCalories = null;
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withTotalCalories(badTotalCalories).build();
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekCloned)))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
 
 	// TODO: TEST CREATE WEEKS WITH INVALID INPUTS
 

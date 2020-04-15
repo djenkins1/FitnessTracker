@@ -9,6 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -37,6 +42,8 @@ public class FitnessWeek {
 			required = true,
 			position = 1)
 	@Column(name = "total_time")
+	@PositiveOrZero
+	@NotNull
 	private Long totalTime;
 
 	@ApiModelProperty(
@@ -45,6 +52,8 @@ public class FitnessWeek {
 			required = true,
 			position = 2)
 	@Column(name = "total_miles")
+	@PositiveOrZero
+	@NotNull
 	private Double totalMiles;
 
 	@ApiModelProperty(
@@ -53,6 +62,8 @@ public class FitnessWeek {
 			required = true,
 			position = 3)
 	@Column(name = "total_calories")
+	@PositiveOrZero
+	@NotNull
 	private Double totalCalories;
 
 	@ApiModelProperty(
@@ -61,6 +72,8 @@ public class FitnessWeek {
 			required = true,
 			position = 4)
 	@Column(name = "miles_to_date")
+	@PositiveOrZero
+	@NotNull
 	private Long milesToDate;
 
 	@ApiModelProperty(
@@ -69,6 +82,8 @@ public class FitnessWeek {
 			required = true,
 			position = 5)
 	@Column(name = "days_exercised")
+	@NotBlank
+	@Size(max=20)
 	private String daysExercised;
 
 	@ApiModelProperty(
@@ -79,6 +94,8 @@ public class FitnessWeek {
 	@Column(name = "date_recorded")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+	@NotNull
+	@PastOrPresent
 	private LocalDate dateRecorded;
 
 	@ApiModelProperty(
@@ -87,6 +104,8 @@ public class FitnessWeek {
 			required = true,
 			position = 7)
 	@Column(name = "exercise_type")
+	@NotBlank
+	@Size(max=20)
 	private String exerciseType;
 
 	@ApiModelProperty(
