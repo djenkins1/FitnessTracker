@@ -15,11 +15,11 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import com.djenkins.fitness.domain.FitnessWeek;
 import com.djenkins.fitness.factory.FitnessWeekBuilder;
@@ -45,6 +45,8 @@ public class TestFitnessWeekValidation {
 
 	@Autowired
 	private TestUtil testUtil;
+
+	private final String DEFAULT_BAD_STR_SIZE_21 = "ABCDEFGHIJ" + "LMNOPQRSTU" + "V";
 
 	@BeforeEach
 	public void setUp() {
@@ -88,7 +90,7 @@ public class TestFitnessWeekValidation {
 	@Test
 	public void testCreateWeek_Fail_exerciseTypeTooLarge() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
-		String badExerciseType = "ABCDEFGHIJ" + "LMNOPQRSTU" + "V";
+		String badExerciseType = DEFAULT_BAD_STR_SIZE_21;
 		assertEquals(21, badExerciseType.length());
 		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
 				.withExerciseType(badExerciseType).build();
@@ -109,7 +111,7 @@ public class TestFitnessWeekValidation {
 	@Test
 	public void testCreateWeek_Fail_daysExercisedTooLarge() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
-		String badDaysExercised = "ABCDEFGHIJ" + "LMNOPQRSTU" + "V";
+		String badDaysExercised = DEFAULT_BAD_STR_SIZE_21;
 		assertEquals(21, badDaysExercised.length());
 		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
 				.withDaysExercised(badDaysExercised).build();
@@ -236,7 +238,7 @@ public class TestFitnessWeekValidation {
 	@Test
 	public void testUpdateWeek_Fail_exerciseTypeTooLarge() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
-		String badExerciseType = "ABCDEFGHIJ" + "LMNOPQRSTU" + "V";
+		String badExerciseType = DEFAULT_BAD_STR_SIZE_21;
 		assertEquals(21, badExerciseType.length());
 		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
 				.withExerciseType(badExerciseType).build();
@@ -257,7 +259,7 @@ public class TestFitnessWeekValidation {
 	@Test
 	public void testUpdateWeek_Fail_daysExercisedTooLarge() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
-		String badDaysExercised = "ABCDEFGHIJ" + "LMNOPQRSTU" + "V";
+		String badDaysExercised = DEFAULT_BAD_STR_SIZE_21;
 		assertEquals(21, badDaysExercised.length());
 		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
 				.withDaysExercised(badDaysExercised).build();
@@ -352,11 +354,135 @@ public class TestFitnessWeekValidation {
 				.andExpect(status().isBadRequest());
 	}
 
-	// TODO: TEST CREATE WEEKS WITH INVALID INPUTS
 	@Test
-	public void testCreateWeeks_Fail_totalCaloriesNull() {
-		//TODO:
-		fail("Not yet implemented");
+	public void testCreateWeeks_Fail_totalCaloriesNull() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setTotalCalories(null);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_totalCaloriesNegative() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setTotalCalories(-1.0);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_totalMilesNull() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setTotalMiles(null);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_totalMilesNegative() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setTotalMiles(-1.0);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_totalTimeNull() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setTotalTime(null);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_totalTimeNegative() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setTotalTime(-1L);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_dateRecordedInFuture() throws Exception {
+		LocalDate futureDate = LocalDate.now().plusDays(1L);
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setDateRecorded(futureDate);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_dateRecordedNull() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setDateRecorded(null);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_exerciseTypeBlank() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setExerciseType("");
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_exerciseTypeTooLarge() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setExerciseType(DEFAULT_BAD_STR_SIZE_21);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_daysExercisedBlank() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setDaysExercised("");
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_daysExercisedTooLarge() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setDaysExercised(DEFAULT_BAD_STR_SIZE_21);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_milesToDateNegative() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setMilesToDate(-1L);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_milesToDateNull() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setMilesToDate(null);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	private void performCreateMultipleWeeks_ExpectBadRequest(List<FitnessWeek> weeks)
+			throws Exception {
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEKS)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weeks)))
+				.andExpect(status().isBadRequest());
+	}
+
+	private List<FitnessWeek> cloneListFromAllData() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		List<FitnessWeek> clonedResults = new ArrayList<>(testDataResults.size());
+		for (FitnessWeek week : testDataResults) {
+			clonedResults.add(new FitnessWeekBuilder(week).build());
+		}
+
+		return clonedResults;
 	}
 
 	// TODO: TEST GET BETWEEN DATES WITH INVALID INPUTS
