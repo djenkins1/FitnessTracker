@@ -99,6 +99,16 @@ public class TestFitnessWeekValidation {
 	}
 
 	@Test
+	public void testCreateWeek_Fail_exerciseTypeNull() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		String badExerciseType = null;
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withExerciseType(badExerciseType).build();
+		performCreateWeek_ExpectBadRequest(weekCloned);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
 	public void testCreateWeek_Fail_daysExercisedBlank() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
 		String badDaysExercised = "";
@@ -113,6 +123,16 @@ public class TestFitnessWeekValidation {
 		List<FitnessWeek> testDataResults = testData.getAllData();
 		String badDaysExercised = DEFAULT_BAD_STR_SIZE_21;
 		assertEquals(21, badDaysExercised.length());
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withDaysExercised(badDaysExercised).build();
+		performCreateWeek_ExpectBadRequest(weekCloned);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeek_Fail_daysExercisedNull() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		String badDaysExercised = null;
 		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
 				.withDaysExercised(badDaysExercised).build();
 		performCreateWeek_ExpectBadRequest(weekCloned);
@@ -247,6 +267,16 @@ public class TestFitnessWeekValidation {
 	}
 
 	@Test
+	public void testUpdateWeek_Fail_exerciseTypeNull() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		String badExerciseType = null;
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withExerciseType(badExerciseType).build();
+		performUpdateWeek_ExpectBadRequest(weekCloned);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
 	public void testUpdateWeek_Fail_daysExercisedBlank() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
 		String badDaysExercised = "";
@@ -261,6 +291,16 @@ public class TestFitnessWeekValidation {
 		List<FitnessWeek> testDataResults = testData.getAllData();
 		String badDaysExercised = DEFAULT_BAD_STR_SIZE_21;
 		assertEquals(21, badDaysExercised.length());
+		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
+				.withDaysExercised(badDaysExercised).build();
+		performUpdateWeek_ExpectBadRequest(weekCloned);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testUpdateWeek_Fail_daysExercisedNull() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		String badDaysExercised = null;
 		FitnessWeek weekCloned = new FitnessWeekBuilder(testDataResults.get(0))
 				.withDaysExercised(badDaysExercised).build();
 		performUpdateWeek_ExpectBadRequest(weekCloned);
@@ -436,6 +476,14 @@ public class TestFitnessWeekValidation {
 	}
 
 	@Test
+	public void testCreateWeeks_Fail_exerciseTypeNull() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setExerciseType(null);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
 	public void testCreateWeeks_Fail_daysExercisedBlank() throws Exception {
 		List<FitnessWeek> clonedResults = cloneListFromAllData();
 		clonedResults.get(1).setDaysExercised("");
@@ -447,6 +495,14 @@ public class TestFitnessWeekValidation {
 	public void testCreateWeeks_Fail_daysExercisedTooLarge() throws Exception {
 		List<FitnessWeek> clonedResults = cloneListFromAllData();
 		clonedResults.get(1).setDaysExercised(DEFAULT_BAD_STR_SIZE_21);
+		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateWeeks_Fail_daysExercisedNull() throws Exception {
+		List<FitnessWeek> clonedResults = cloneListFromAllData();
+		clonedResults.get(1).setDaysExercised(null);
 		performCreateMultipleWeeks_ExpectBadRequest(clonedResults);
 		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
