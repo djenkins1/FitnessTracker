@@ -30,6 +30,18 @@ public class FitnessWeekService {
 		return fitnessWeekRepo.save(fitnessWeek);
 	}
 
+	public void deleteFitnessWeekById(Long id) {
+		fitnessWeekRepo.deleteById(id);
+	}
+
+	public FitnessWeek updateFitnessWeek(FitnessWeek week) {
+		return fitnessWeekRepo.save(week);
+	}
+
+	public Iterable<FitnessWeek> createFitnessWeeks(List<FitnessWeek> fitnessWeeks) {
+		return fitnessWeekRepo.saveAll(fitnessWeeks);
+	}
+
 	public FitnessWeek getFitnessWeekById(long weekId) {
 		Optional<FitnessWeek> result = fitnessWeekRepo.findById(weekId);
 		if (result.isPresent()) {

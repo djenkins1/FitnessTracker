@@ -22,4 +22,8 @@ public class FitnessWeekEndpointConstants {
 	public static final String SUM_BY_EXERCISE_TYPES = "/rest/fitnessWeeks/sum/exerciseTypes";	
 	
 	public static final String SUM_MONTHLY = "/rest/fitnessWeeks/sums";
+
+	public static final String CREATE_WEEKS = "/rest/fitnessWeeks/weeks";
+
+	public static final String UPDATE_WEEK = "/rest/fitnessWeek/update";
 }

@@ -90,11 +90,53 @@ public class FitnessWeekController {
 			value = FitnessWeekEndpointConstants.GET_WEEK,
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public FitnessWeek getWeek(
+	public @ResponseBody
+	FitnessWeek getWeek(
 			@ApiParam("Id of the FitnessWeek to search for. Cannot be empty.")
 			@PathVariable("id")
-			long weekId) {
+			Long weekId) {
 		return fitnessWeekService.getFitnessWeekById(weekId);
+	}
+
+	@ApiOperation("Deletes a specific FitnessWeek from the system based on the identifier given.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.GET_WEEK,
+			method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteWeekById(
+			@ApiParam("Id of the FitnessWeek to delete. Cannot be empty.")
+			@PathVariable("id")
+			Long weekId) {
+		fitnessWeekService.deleteFitnessWeekById(weekId);
+	}
+
+	@ApiOperation("Updates a specific FitnessWeek in the system from the object given.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.UPDATE_WEEK,
+			method = RequestMethod.PUT,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	FitnessWeek updateFitnessWeek(@ApiParam("Information for the FitnessWeek to be updated.")
+	FitnessWeek fitnessWeek) {
+		return fitnessWeekService.updateFitnessWeek(fitnessWeek);
+	}
+
+	@ApiOperation("Creates multiple new FitnessWeek objects.")
+	@RequestMapping(
+			value = FitnessWeekEndpointConstants.CREATE_WEEKS,
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	Iterable<FitnessWeek> createFitnessWeeks(
+			@ApiParam("Information for the new FitnessWeek objects to be created.")
+			@RequestBody
+			List<FitnessWeek> fitnessWeeks) {
+		// TODO: validation, see Spring AOP
+		for (FitnessWeek week : fitnessWeeks) {
+			week.setCreatedTs(Instant.now());
+			week.setId(null);// set to null in case passed into request
+		}
+		return fitnessWeekService.createFitnessWeeks(fitnessWeeks);
 	}
 
 	@ApiOperation("Creates a new FitnessWeek.")

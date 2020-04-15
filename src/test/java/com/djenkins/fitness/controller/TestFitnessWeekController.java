@@ -18,11 +18,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.text.ParseException;
 import java.time.LocalDate;
 
 import javax.persistence.EntityNotFoundException;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.djenkins.fitness.domain.FitnessWeek;
 import com.djenkins.fitness.domain.FitnessWeekSum;
@@ -437,7 +439,82 @@ public class TestFitnessWeekController {
 		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 
+	@Test
+	public void testUpdateFitnessWeek_Success() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		FitnessWeek weekToUpdate = testDataResults.get(0);
+		when(fitnessWeekServiceMock.updateFitnessWeek(Mockito.any())).thenReturn(weekToUpdate);
+		mockMvc.perform(put(FitnessWeekEndpointConstants.UPDATE_WEEK)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(weekToUpdate)))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.id", is(weekToUpdate.getId().intValue())))
+				.andExpect(jsonPath("$.totalTime", is(weekToUpdate.getTotalTime().intValue())))
+				.andExpect(jsonPath("$.totalMiles", is(weekToUpdate.getTotalMiles())))
+				.andExpect(jsonPath("$.totalCalories", is(weekToUpdate.getTotalCalories())))
+				.andExpect(jsonPath("$.milesToDate", is(weekToUpdate.getMilesToDate().intValue())))
+				.andExpect(jsonPath("$.daysExercised", is(weekToUpdate.getDaysExercised())))
+				.andExpect(
+						jsonPath("$.dateRecorded", is(weekToUpdate.getDateRecorded().toString())))
+				.andExpect(jsonPath("$.exerciseType", is(weekToUpdate.getExerciseType())));
+		verify(fitnessWeekServiceMock, times(1)).updateFitnessWeek(Mockito.any());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testCreateFitnessWeeks_Success() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		FitnessWeek testResult = testDataResults.get(0);
+		when(fitnessWeekServiceMock.createFitnessWeeks(Mockito.anyList()))
+				.thenReturn(testDataResults);
+		mockMvc.perform(post(FitnessWeekEndpointConstants.CREATE_WEEKS)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(testUtil.convertObjectToJsonBytes(testDataResults)))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$", hasSize(testDataResults.size())))
+				.andExpect(jsonPath("$[0].id", is(testResult.getId().intValue())))
+				.andExpect(jsonPath("$[0].totalTime", is(testResult.getTotalTime().intValue())))
+				.andExpect(jsonPath("$[0].totalMiles", is(testResult.getTotalMiles())))
+				.andExpect(jsonPath("$[0].totalCalories", is(testResult.getTotalCalories())))
+				.andExpect(jsonPath("$[0].milesToDate", is(testResult.getMilesToDate().intValue())))
+				.andExpect(jsonPath("$[0].daysExercised", is(testResult.getDaysExercised())))
+				.andExpect(
+						jsonPath("$[0].dateRecorded", is(testResult.getDateRecorded().toString())))
+				.andExpect(jsonPath("$[0].exerciseType", is(testResult.getExerciseType())));
+
+		verify(fitnessWeekServiceMock, times(1)).createFitnessWeeks(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testDeleteWeekById_Success() throws Exception {
+		List<FitnessWeek> testDataResults = testData.getAllData();
+		FitnessWeek testResult = testDataResults.get(0);
+		Long id = testResult.getId();
+
+		mockMvc.perform(delete(FitnessWeekEndpointConstants.GET_WEEK, id))
+				.andExpect(status().isOk());
+
+		verify(fitnessWeekServiceMock, times(1)).deleteFitnessWeekById(Mockito.anyLong());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testDeleteWeekById_NotFound() throws Exception {
+		Long idNotExists = 0L;
+		Mockito.doThrow(EntityNotFoundException.class).when(fitnessWeekServiceMock)
+				.deleteFitnessWeekById(Mockito.anyLong());
+		mockMvc.perform(delete(FitnessWeekEndpointConstants.GET_WEEK, idNotExists))
+				.andExpect(status().isNotFound());
+
+		verify(fitnessWeekServiceMock, times(1)).deleteFitnessWeekById(Mockito.anyLong());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
 	// TODO: TEST CREATE WEEK WITH INVALID INPUTS
+	
+	// TODO: TEST CREATE WEEKS WITH INVALID INPUTS
 
 	// TODO: TEST GET BETWEEN DATES WITH INVALID INPUTS
 

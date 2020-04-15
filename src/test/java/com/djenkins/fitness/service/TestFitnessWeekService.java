@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -433,5 +435,51 @@ public class TestFitnessWeekService {
 		// verify that the service only called the repo method once
 		verify(mockedFitnessWeekRepo, times(2)).findAll(Mockito.any());
 		verifyNoMoreInteractions(mockedFitnessWeekRepo);
+	}
+
+	@Test
+	public void testDeleteFitnessWeekById() {
+		Long id = 1L;
+		fitnessWeekService.deleteFitnessWeekById(id);
+		verify(mockedFitnessWeekRepo, times(1)).deleteById(id);
+		verifyNoMoreInteractions(mockedFitnessWeekRepo);
+	}
+
+	@Test
+	public void testUpdateFitnessWeek() {
+		FitnessWeek weekToUpdate = allWeeks.get(0);
+		when(mockedFitnessWeekRepo.save(Mockito.any())).thenReturn(weekToUpdate);
+		FitnessWeek weekUpdated = fitnessWeekService.updateFitnessWeek(weekToUpdate);
+		this.assertFitnessWeeksEqual(weekToUpdate, weekUpdated);
+		verify(mockedFitnessWeekRepo, times(1)).save(Mockito.any());
+		verifyNoMoreInteractions(mockedFitnessWeekRepo);
+	}
+
+	@Test
+	public void testCreateFitnessWeeks() {
+		List<FitnessWeek> weeksToCreate = allWeeks;
+		when(mockedFitnessWeekRepo.saveAll(Mockito.anyList())).thenReturn(weeksToCreate);
+		Iterable<FitnessWeek> weeksCreatedIterable = fitnessWeekService
+				.createFitnessWeeks(weeksToCreate);
+		List<FitnessWeek> weeksCreated = StreamSupport
+				.stream(weeksCreatedIterable.spliterator(), false)
+				.collect(Collectors.toList());
+		assertEquals(weeksToCreate.size(), weeksCreated.size());
+		for (int i = 0; i < weeksCreated.size(); i++) {
+			this.assertFitnessWeeksEqual(weeksToCreate.get(i), weeksCreated.get(i));
+		}
+		verify(mockedFitnessWeekRepo, times(1)).saveAll(Mockito.anyList());
+		verifyNoMoreInteractions(mockedFitnessWeekRepo);
+	}
+
+	private void assertFitnessWeeksEqual(FitnessWeek expected, FitnessWeek actual) {
+		assertEquals(expected.getTotalCalories(), actual.getTotalCalories());
+		assertEquals(expected.getTotalTime(), actual.getTotalTime());
+		assertEquals(expected.getTotalMiles(), actual.getTotalMiles());
+		assertEquals(expected.getCreatedTs(), actual.getCreatedTs());
+		assertEquals(expected.getExerciseType(), actual.getExerciseType());
+		assertEquals(expected.getMilesToDate(), actual.getMilesToDate());
+		assertEquals(expected.getDateRecorded(), actual.getDateRecorded());
+		assertEquals(expected.getId(), actual.getId());
 	}
 }
