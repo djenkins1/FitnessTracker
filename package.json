@@ -1,0 +1,38 @@
+{
+	"name": "fitness",
+	"version": "1.0.0",
+	"description": "Fitness Tracker app",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "webpack --mode development"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/djenkins1/FitnessTracker.git"
+	},
+	"author": "Dilan Jenkins",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/djenkins1/FitnessTracker/issues"
+	},
+	"homepage": "https://github.com/djenkins1/FitnessTracker#readme",
+	"dependencies": {
+		"css-loader": "^3.5.1",
+		"moment": "^2.24.0",
+		"react": "^16.5.2",
+		"react-bulma-components": "^3.2.0",
+		"react-dom": "^16.5.2",
+		"react-router-dom": "^5.1.2",
+		"react-vis": "^1.11.7",
+		"rest": "^1.3.1"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.1.0",
+		"@babel/preset-env": "^7.1.0",
+		"@babel/preset-react": "^7.0.0",
+		"babel-loader": "^8.0.2",
+		"webpack": "^4.19.1",
+		"webpack-cli": "^3.1.0"
+	}
+}
