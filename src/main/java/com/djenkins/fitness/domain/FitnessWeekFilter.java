@@ -1,6 +1,6 @@
 package com.djenkins.fitness.domain;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -30,12 +30,12 @@ public class FitnessWeekFilter {
 	 * The date that results should be included from, ignored if null or if
 	 * toDateRecorded is null
 	 */
-	private Date fromDateRecorded;
+	private LocalDate fromDateRecorded;
 	/**
 	 * The date that results should be included up to,ignored if null or if
 	 * fromDateRecorded is null
 	 */
-	private Date toDateRecorded;
+	private LocalDate toDateRecorded;
 
 	public List<Long> getIds() {
 		return ids;
@@ -61,19 +61,19 @@ public class FitnessWeekFilter {
 		this.daysExercised = daysExercised;
 	}
 
-	public Date getFromDateRecorded() {
+	public LocalDate getFromDateRecorded() {
 		return fromDateRecorded;
 	}
 
-	public void setFromDateRecorded(Date fromDateRecorded) {
-		this.fromDateRecorded = fromDateRecorded;
+	public void setFromDateRecorded(LocalDate startDate) {
+		this.fromDateRecorded = startDate;
 	}
 
-	public Date getToDateRecorded() {
+	public LocalDate getToDateRecorded() {
 		return toDateRecorded;
 	}
 
-	public void setToDateRecorded(Date toDateRecorded) {
+	public void setToDateRecorded(LocalDate toDateRecorded) {
 		this.toDateRecorded = toDateRecorded;
 	}	
 }

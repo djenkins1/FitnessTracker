@@ -3,8 +3,8 @@ package com.djenkins.fitness.spec;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Date;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,16 +16,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.djenkins.fitness.domain.FitnessWeek;
 import com.djenkins.fitness.domain.FitnessWeekFilter;
 import com.djenkins.fitness.repo.FitnessWeekRepository;
-import com.djenkins.fitness.util.DateTimeUtil;
 
 @SpringBootTest
 @Disabled
 public class TestFitnessWeekSpec {
 	@Autowired
 	private FitnessWeekRepository fitnessWeekRepo;
-
-	@Autowired
-	DateTimeUtil dateTimeUtil;
 
 	@Test
 	public void testFilterByIds() {
@@ -67,8 +63,8 @@ public class TestFitnessWeekSpec {
 
 	@Test
 	public void testFilterByFromAndToDates() throws ParseException {
-		Date fromDate = dateTimeUtil.getDateFromStringMDY("2/27/2020");
-		Date toDate = dateTimeUtil.getDateFromStringMDY("3/20/2020");
+		LocalDate fromDate = LocalDate.parse("2/27/2020");
+		LocalDate toDate = LocalDate.parse("3/20/2020");
 		FitnessWeekFilter filter = new FitnessWeekFilter();
 		filter.setFromDateRecorded(fromDate);
 		filter.setToDateRecorded(toDate);

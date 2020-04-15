@@ -152,6 +152,7 @@ class App extends React.Component {
 	getSumDataForDates(startDate, endDate) {
 		this.setState({ "loading": true });
 		const url = './rest/fitnessWeeks/sum/between?startDate=' + startDate + '&endDate=' + endDate;
+		//TODO: catch 404 error by checking response.status in .then
 		fetch(url, {
 			method: 'GET',
 			mode: 'cors',

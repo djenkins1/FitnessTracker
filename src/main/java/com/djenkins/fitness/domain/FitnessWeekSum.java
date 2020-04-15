@@ -1,5 +1,11 @@
 package com.djenkins.fitness.domain;
 
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -26,6 +32,24 @@ public class FitnessWeekSum {
 			required = true,
 			position = 2)
 	private Long totalTime;
+
+	@ApiModelProperty(
+			notes = "Starting date for the date range.",
+			example = "2020-03-20",
+			required = false,
+			position = 3)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+	private LocalDate startDate;
+
+	@ApiModelProperty(
+			notes = "Ending date for the date range.",
+			example = "2020-04-25",
+			required = false,
+			position = 4)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+	private LocalDate endDate;
 
 	public FitnessWeekSum() {
 		this.totalCalories = 0.0;
@@ -61,6 +85,22 @@ public class FitnessWeekSum {
 
 	public void setTotalTime(Long totalTime) {
 		this.totalTime = totalTime;
+	}
+
+	public LocalDate getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public LocalDate getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
 	}
 
 }

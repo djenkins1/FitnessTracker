@@ -1,7 +1,7 @@
 package com.djenkins.fitness.domain;
 
-import java.sql.Date;
-import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +9,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,6 +42,8 @@ public class FitnessWeek {
 			required = true,
 			position = 1)
 	@Column(name = "total_time")
+	@PositiveOrZero
+	@NotNull
 	private Long totalTime;
 
 	@ApiModelProperty(
@@ -41,6 +52,8 @@ public class FitnessWeek {
 			required = true,
 			position = 2)
 	@Column(name = "total_miles")
+	@PositiveOrZero
+	@NotNull
 	private Double totalMiles;
 
 	@ApiModelProperty(
@@ -49,6 +62,8 @@ public class FitnessWeek {
 			required = true,
 			position = 3)
 	@Column(name = "total_calories")
+	@PositiveOrZero
+	@NotNull
 	private Double totalCalories;
 
 	@ApiModelProperty(
@@ -57,6 +72,8 @@ public class FitnessWeek {
 			required = true,
 			position = 4)
 	@Column(name = "miles_to_date")
+	@PositiveOrZero
+	@NotNull
 	private Long milesToDate;
 
 	@ApiModelProperty(
@@ -65,6 +82,8 @@ public class FitnessWeek {
 			required = true,
 			position = 5)
 	@Column(name = "days_exercised")
+	@NotBlank
+	@Size(max=20)
 	private String daysExercised;
 
 	@ApiModelProperty(
@@ -73,7 +92,11 @@ public class FitnessWeek {
 			required = true,
 			position = 6)
 	@Column(name = "date_recorded")
-	private Date dateRecorded;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+	@NotNull
+	@PastOrPresent
+	private LocalDate dateRecorded;
 
 	@ApiModelProperty(
 			notes = "The type of exercise done this week.",
@@ -81,6 +104,8 @@ public class FitnessWeek {
 			required = true,
 			position = 7)
 	@Column(name = "exercise_type")
+	@NotBlank
+	@Size(max=20)
 	private String exerciseType;
 
 	@ApiModelProperty(
@@ -89,7 +114,9 @@ public class FitnessWeek {
 			required = false,
 			position = 8)
 	@Column(name = "created_date")
-	private Timestamp createdTs;
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+	private Instant createdTs;
 
 	public Long getId() {
 		return id;
@@ -139,11 +166,11 @@ public class FitnessWeek {
 		this.daysExercised = daysExercised;
 	}
 
-	public Date getDateRecorded() {
+	public LocalDate getDateRecorded() {
 		return dateRecorded;
 	}
 
-	public void setDateRecorded(Date dateRecorded) {
+	public void setDateRecorded(LocalDate dateRecorded) {
 		this.dateRecorded = dateRecorded;
 	}
 
@@ -155,11 +182,11 @@ public class FitnessWeek {
 		this.exerciseType = exerciseType;
 	}
 
-	public Timestamp getCreatedTs() {
+	public Instant getCreatedTs() {
 		return createdTs;
 	}
 
-	public void setCreatedTs(Timestamp createdTs) {
+	public void setCreatedTs(Instant createdTs) {
 		this.createdTs = createdTs;
 	}
 
