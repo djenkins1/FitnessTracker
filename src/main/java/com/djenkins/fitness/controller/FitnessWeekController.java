@@ -71,7 +71,6 @@ public class FitnessWeekController {
 			@RequestParam
 			List<Long> ids) {
 		// get fitness weeks having ids given
-		// TODO: validation, see Spring AOP
 		return fitnessWeekService.getByIds(ids);
 	}
 
@@ -84,7 +83,6 @@ public class FitnessWeekController {
 			@ApiParam("List of exercise types to search for. Cannot be empty.")
 			@RequestParam
 			List<String> exerciseTypes) {
-		// TODO: validation, see Spring AOP
 		return fitnessWeekService.getByExerciseTypes(exerciseTypes);
 	}
 
@@ -134,7 +132,6 @@ public class FitnessWeekController {
 			@ApiParam("Information for the new FitnessWeek objects to be created.")
 			@RequestBody
 			@Valid List<FitnessWeek> fitnessWeeks) {
-		// TODO: validation, see Spring AOP
 		for (FitnessWeek week : fitnessWeeks) {
 			week.setCreatedTs(Instant.now());
 			week.setId(null);// set to null in case passed into request
@@ -152,7 +149,6 @@ public class FitnessWeekController {
 			@ApiParam("Information for the new FitnessWeek to be created.")
 			@RequestBody
 			@Valid FitnessWeek fitnessWeek) {
-		// TODO: validation, see Spring AOP
 		fitnessWeek.setCreatedTs(Instant.now());
 		fitnessWeek.setId(null);// set to null in case passed into request
 		return fitnessWeekService.createFitnessWeek(fitnessWeek);
