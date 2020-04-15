@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -52,10 +53,12 @@ public class FitnessWeekController {
 			@ApiParam("Start date of the date range to search for. Cannot be empty.")
 			@RequestParam
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			@NotNull
 			LocalDate startDate,
 			@ApiParam("End date of the date range to search for. Cannot be empty.")
 			@RequestParam
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			@NotNull
 			LocalDate endDate) {
 		// get fitness weeks with recordedDate between startDate and endDate
 		return fitnessWeekService.getInDateRange(startDate, endDate);
@@ -188,10 +191,12 @@ public class FitnessWeekController {
 			@ApiParam("Start date of the date range to search for and sum. Cannot be empty.")
 			@RequestParam
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			@NotNull
 			LocalDate startDate,
 			@ApiParam("End date of the date range to search for and sum. Cannot be empty.")
 			@RequestParam
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			@NotNull
 			LocalDate endDate) {
 		List<FitnessWeek> weeksInRange = fitnessWeekService.getInDateRange(startDate, endDate);
 		// if the list is empty than throw not found exception to get 404 error
@@ -258,10 +263,12 @@ public class FitnessWeekController {
 			@ApiParam("Start date of the date range to search for and sum. Cannot be empty.")
 			@RequestParam
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			@NotNull
 			LocalDate startDate,
 			@ApiParam("End date of the date range to search for and sum. Cannot be empty.")
 			@RequestParam
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+			@NotNull
 			LocalDate endDate) {
 		List<FitnessWeekSum> results = fitnessWeekService.sumMonthlyForDateRange(startDate,
 				endDate);

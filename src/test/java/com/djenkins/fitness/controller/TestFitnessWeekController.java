@@ -161,6 +161,49 @@ public class TestFitnessWeekController {
 	}
 
 	@Test
+	public void testGetBetweenDatesFail_BadBothDates() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_IN_RANGE)
+				.param("startDate", "BADDATE").param("endDate",
+						"BADDATE"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testGetBetweenDatesFail_EmptyStartDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_IN_RANGE)
+				.param("startDate", "").param("endDate",
+						"2020-03-10"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testGetBetweenDatesFail_EmptyEndDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_IN_RANGE)
+				.param("startDate", "2020-03-10").param("endDate", ""))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testGetBetweenDatesFail_BadStartDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_IN_RANGE)
+				.param("startDate", "BADDATE").param("endDate",
+						"2020-03-10"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testGetBetweenDatesFail_BadEndDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.GET_IN_RANGE)
+				.param("startDate", "2020-03-10").param("endDate", "BADDATE"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
 	public void testGetByExerciseTypesSuccess() throws Exception {
 		List<FitnessWeek> testDataResults = testData.getAllData();
 		when(fitnessWeekServiceMock.getByExerciseTypes(Mockito.anyList()))
@@ -247,6 +290,47 @@ public class TestFitnessWeekController {
 		verify(fitnessWeekServiceMock, times(1)).sumTotalCaloriesFor(Mockito.anyList());
 		verify(fitnessWeekServiceMock, times(1)).sumTotalMilesFor(Mockito.anyList());
 		verify(fitnessWeekServiceMock, times(1)).sumTotalTimeFor(Mockito.anyList());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumInRangeFail_BadBothDates() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_IN_RANGE)
+				.param("startDate", "BADDATE").param("endDate", "BADDATE"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumInRangeFail_BadStartDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_IN_RANGE)
+				.param("startDate", "BADDATE").param("endDate", "2020-03-10"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumInRangeFail_BadEndDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_IN_RANGE)
+				.param("startDate", "2020-02-20").param("endDate",
+						"BADDATE"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumInRangeFail_EmptyStartDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_IN_RANGE)
+				.param("startDate", "").param("endDate", "2020-02-20"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumInRangeFail_EmptyEndDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_IN_RANGE)
+				.param("startDate", "2020-02-20").param("endDate", ""))
+				.andExpect(status().isBadRequest());
 		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 
@@ -434,6 +518,46 @@ public class TestFitnessWeekController {
 				.andExpect(status().isNotFound());
 		verify(fitnessWeekServiceMock, times(1)).sumMonthlyForDateRange(Mockito.any(),
 				Mockito.any());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumMonthlyFail_BadBothDates() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_MONTHLY)
+				.param("startDate", "BADDATE").param("endDate", "BADDATE"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumMonthlyFail_BadStartDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_MONTHLY)
+				.param("startDate", "BADDATE").param("endDate", "2020-01-01"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumMonthlyFail_BadEndDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_MONTHLY)
+				.param("startDate", "2020-01-01").param("endDate", "BADDATE"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumMonthlyFail_EmptyStartDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_MONTHLY)
+				.param("startDate", "").param("endDate", "2020-01-01"))
+				.andExpect(status().isBadRequest());
+		verifyNoMoreInteractions(fitnessWeekServiceMock);
+	}
+
+	@Test
+	public void testSumMonthlyFail_EmptyEndDate() throws Exception {
+		mockMvc.perform(get(FitnessWeekEndpointConstants.SUM_MONTHLY)
+				.param("startDate", "2020-01-01").param("endDate", ""))
+				.andExpect(status().isBadRequest());
 		verifyNoMoreInteractions(fitnessWeekServiceMock);
 	}
 

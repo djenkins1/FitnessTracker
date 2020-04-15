@@ -540,6 +540,4 @@ public class TestFitnessWeekValidation {
 
 		return clonedResults;
 	}
-
-	// TODO: TEST GET BETWEEN DATES WITH INVALID INPUTS
 }
