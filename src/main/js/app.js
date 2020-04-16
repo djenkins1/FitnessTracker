@@ -6,7 +6,7 @@ import {
 	BrowserRouter as Router,
 	Switch,
 	Route,
-	Link
+	NavLink
 } from "react-router-dom";
 
 import FitnessWeekTable from './FitnessWeekTable';
@@ -70,11 +70,11 @@ class App extends React.Component {
 					</Navbar.Brand>
 					<Navbar.Menu className="is-active">
 						<Navbar.Container>
-							<Link onClick={this.clearErrorMessageState} className="navbar-item" to="/" >Home</Link>
-							<Link onClick={this.clearErrorMessageState} className="navbar-item" to="/graph" >Daily Graph</Link>
-							<Link onClick={this.clearErrorMessageState} className="navbar-item" to="/sums">Monthly Graph</Link>
-							<Link onClick={this.clearErrorMessageState} className="navbar-item" to="/sumsAnnual" >Annual Report</Link>
-							<Link onClick={this.clearErrorMessageState} className="navbar-item" to="/create" >Add Week</Link>
+							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/" >Home</NavLink>
+							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/graph" >Daily Graph</NavLink>
+							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/sums">Monthly Graph</NavLink>
+							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/sumsAnnual" >Annual Report</NavLink>
+							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/create" >Add Week</NavLink>
 						</Navbar.Container>
 					</Navbar.Menu>
 				</Navbar>
