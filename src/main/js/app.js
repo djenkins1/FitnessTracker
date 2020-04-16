@@ -37,7 +37,7 @@ class App extends React.Component {
 					"title": "Total Time",
 					"attr": "totalTime"
 				}
-			]
+			], "sumForWeeks": {}, "fitnessWeekSums": []
 		};
 
 		this.addWeek = this.addWeek.bind(this);
@@ -45,6 +45,7 @@ class App extends React.Component {
 		this.handleFilterDates = this.handleFilterDates.bind(this);
 		this.getDateFilterDetails = this.getDateFilterDetails.bind(this);
 		this.getSumDataForDates = this.getSumDataForDates.bind(this);
+		this.getSumsByMonths = this.getSumsByMonths.bind(this);
 	}
 
 	componentDidMount() {
@@ -56,6 +57,7 @@ class App extends React.Component {
 				this.setState({ fitnessWeeks: data });
 				this.sortWeeks();
 				this.getSumDataForDates(defaultDates.startDate, defaultDates.endDate);
+				this.getSumsByMonths(defaultDates.startDate, defaultDates.endDate);
 			})
 			.catch(console.log);
 
@@ -63,13 +65,12 @@ class App extends React.Component {
 
 	getDefaultDatesForSum() {
 		const JANUARY = 0;//months start at 0
-		const DECEMBER = 11;//months start at 0
 		Moment.locale('en');//TODO: pull this out to some configuration?
 		const startOfYear = Moment(new Date(new Date().getFullYear(), JANUARY, 1)).format('YYYY-MM-DD');
-		const endOfYear = Moment(new Date(new Date().getFullYear(), DECEMBER, 31)).format('YYYY-MM-DD');
+		const today = Moment(new Date()).format('YYYY-MM-DD');
 		return {
 			"startDate": startOfYear,
-			"endDate": endOfYear
+			"endDate": today
 		};
 	}
 
@@ -98,13 +99,14 @@ class App extends React.Component {
 			<Router>
 				<Navbar color="info">
 					<Navbar.Brand>
-						<Navbar.Item renderAs="span"><i class="fas fa-running"></i> Fitness Tracker</Navbar.Item>
+						<Navbar.Item renderAs="span"><i className="fas fa-running"></i> Fitness Tracker</Navbar.Item>
 						<Navbar.Burger data-target="navLinksMenu" />
 					</Navbar.Brand>
 					<Navbar.Menu className="is-active">
 						<Navbar.Container>
 							<Link className="navbar-item" to="/" >Home</Link>
 							<Link className="navbar-item" to="/graph" >Daily Graph</Link>
+							<Link className="navbar-item" to="/sums">Monthly Graph</Link>
 							<Link className="navbar-item" to="/sumsAnnual" >Annual Report</Link>
 							<Link className="navbar-item" to="/create" >Add Week</Link>
 						</Navbar.Container>
@@ -120,9 +122,14 @@ class App extends React.Component {
 						<FitnessWeekForm title="Add Week" addWeek={this.addWeek} />
 					</Route>
 					<Route path="/sumsAnnual">
-						<FitnessWeekSumReport title="Annual Report" sumData={this.state.sumWeeks}>
+						<FitnessWeekSumReport title="Annual Report" sumData={this.state.sumForWeeks}>
 							<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumDataForDates} />
 						</FitnessWeekSumReport>
+					</Route>
+					<Route path="/sums">
+						<FitnessWeekGraphFilter showByX="endDate" showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeekSums}>
+							<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumsByMonths} />
+						</FitnessWeekGraphFilter>
 					</Route>
 					<Route path="/">
 						<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} />
@@ -166,7 +173,7 @@ class App extends React.Component {
 		})
 			.then(res => res.json())
 			.then((data) => {
-				this.setState({ sumWeeks: data });
+				this.setState({ sumForWeeks: data });
 				this.setState({ "loading": false });
 			})
 			.catch(console.log);
@@ -190,6 +197,29 @@ class App extends React.Component {
 			.then((data) => {
 				this.setState({ fitnessWeeks: data });
 				this.sortWeeks();
+				this.setState({ "loading": false });
+			})
+			.catch(console.log);
+	}
+
+	getSumsByMonths(startDate, endDate) {
+		this.setState({ "loading": true });
+		const url = './rest/fitnessWeeks/sums?startDate=' + startDate + '&endDate=' + endDate;
+		//TODO: catch 404 error by checking response.status in .then
+		fetch(url, {
+			method: 'GET',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'error',
+			referrerPolicy: 'no-referrer'
+		})
+			.then(res => res.json())
+			.then((data) => {
+				this.setState({ fitnessWeekSums: data });
 				this.setState({ "loading": false });
 			})
 			.catch(console.log);

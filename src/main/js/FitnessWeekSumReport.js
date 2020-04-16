@@ -3,7 +3,7 @@ import { Container, Box, Notification, Heading, Table } from 'react-bulma-compon
 
 class FitnessWeekSumReport extends Component {
 	render() {
-		if (this.props.sumData) {
+		if (this.props.sumData && this.props.sumData.totalCalories !== undefined) {
 			const timeInDaysHoursMinutes = this.convertMinutes(this.props.sumData.totalTime);
 			return (
 				<Box>
