@@ -17,7 +17,6 @@ class FitnessWeekDateFilter extends Component {
 	}
 
 	validateDates(startDate, endDate) {
-		Moment.locale('en');//TODO: pull this out to some configuration?
 		const today = Moment();
 		const startAsMomentDate = Moment(startDate, "YYYY-MM-DD");
 		const endAsMomentDate = Moment(endDate, "YYYY-MM-DD");

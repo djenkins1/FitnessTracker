@@ -65,7 +65,6 @@ class App extends React.Component {
 
 	getDefaultDatesForSum() {
 		const JANUARY = 0;//months start at 0
-		Moment.locale('en');//TODO: pull this out to some configuration?
 		const startOfYear = Moment(new Date(new Date().getFullYear(), JANUARY, 1)).format('YYYY-MM-DD');
 		const today = Moment(new Date()).format('YYYY-MM-DD');
 		return {

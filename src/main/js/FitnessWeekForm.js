@@ -236,7 +236,6 @@ class FitnessWeekForm extends Component {
 		}
 		else if (name === "dateRecorded") {
 			formAttr = name;
-			Moment.locale('en');//TODO: pull this out to some configuration?
 			fieldTitle = "Date Recorded";
 			const today = Moment();
 			const valueAsMomentDate = Moment(value, "YYYY-MM-DD");
