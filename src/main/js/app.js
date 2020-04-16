@@ -13,7 +13,7 @@ import FitnessWeekTable from './FitnessWeekTable';
 import FitnessWeekGraphFilter from './FitnessWeekGraphFilter';
 import FitnessWeekForm from "./FitnessWeekForm";
 import FitnessWeekDateFilter from "./FitnessWeekDateFilter";
-import FitnessWeekSumGraph from "./FitnessWeekSumGraph";
+import FitnessWeekSumReport from "./FitnessWeekSumReport";
 
 
 class App extends React.Component {
@@ -120,9 +120,9 @@ class App extends React.Component {
 						<FitnessWeekForm title="Add Week" addWeek={this.addWeek} />
 					</Route>
 					<Route path="/sumsAnnual">
-						<FitnessWeekSumGraph title="Annual Report" sumData={this.state.sumWeeks}>
+						<FitnessWeekSumReport title="Annual Report" sumData={this.state.sumWeeks}>
 							<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumDataForDates} />
-						</FitnessWeekSumGraph>
+						</FitnessWeekSumReport>
 					</Route>
 					<Route path="/">
 						<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} />
