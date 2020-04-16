@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Form, Button } from 'react-bulma-components';
+import Moment from 'moment';
 
 class FitnessWeekDateFilter extends Component {
 	constructor(props) {
@@ -7,10 +8,38 @@ class FitnessWeekDateFilter extends Component {
 		this.state = {
 			"fromDate": this.props.startDate ? this.props.startDate : '',
 			"toDate": this.props.endDate ? this.props.endDate : '',
-			"hasUserModified" : false
+			"hasUserModified": false,
+			"errors": []
 		};
 		this.handleChangeDate = this.handleChangeDate.bind(this);
 		this.handleClickFilterButton = this.handleClickFilterButton.bind(this);
+		this.validateDates = this.validateDates.bind(this);
+	}
+
+	validateDates(startDate, endDate) {
+		Moment.locale('en');//TODO: pull this out to some configuration?
+		const today = Moment();
+		const startAsMomentDate = Moment(startDate, "YYYY-MM-DD");
+		const endAsMomentDate = Moment(endDate, "YYYY-MM-DD");
+		const validationErrors = [];
+		if (!startAsMomentDate.isValid()) {
+			validationErrors.push("From date must be a date of the format 2020-12-31.");
+		}
+		else if (startAsMomentDate.isAfter(today)) {
+			validationErrors.push("From date must not be in the future.");
+		}
+
+		if (!endAsMomentDate.isValid()) {
+			validationErrors.push("To date must be a date of the format 2020-12-31.");
+		}
+		else if (endAsMomentDate.isAfter(today)) {
+			validationErrors.push("To date must not be in the future.");
+		}
+		else if (startAsMomentDate.isValid() && startAsMomentDate.isAfter(endAsMomentDate)) {
+			validationErrors.push("From date cannot occur after To date.");
+		}
+
+		return validationErrors;
 	}
 
 	handleChangeDate(event) {
@@ -18,7 +47,7 @@ class FitnessWeekDateFilter extends Component {
 		const name = event.target.name;
 		const value = event.target.value;
 		if (name === "fromDate" || name === "toDate") {
-			this.setState({ [name]: value, "hasUserModified" : true });
+			this.setState({ [name]: value, "hasUserModified": true });
 		}
 		else {
 			console.log("handleChangeDate called for wrong input: " + name + " with value: " + value);
@@ -28,26 +57,33 @@ class FitnessWeekDateFilter extends Component {
 	handleClickFilterButton(event) {
 		event.preventDefault();
 		if (this.state.fromDate && this.state.toDate) {
-			this.props.onFilterDates(this.state.fromDate, this.state.toDate);
+			const validationErrors = this.validateDates(this.state.fromDate, this.state.toDate);
+			if (validationErrors && validationErrors.length > 0) {
+				this.setState({ "errors": validationErrors });
+			}
+			else {
+				this.setState({ "errors": [] });
+				this.props.onFilterDates(this.state.fromDate, this.state.toDate);
+			}
+
 		}
 	}
 
 	componentWillReceiveProps(nextProps) {
 		//update the dates selected when the props change
 		//do not change the state if the dates are already selected from user input
-		if ( !this.state.hasUserModified && nextProps.startDate !== this.state.fromDate) {
-			console.log("start date " + nextProps.startDate);
+		if (!this.state.hasUserModified && nextProps.startDate !== this.state.fromDate) {
 			this.setState({ "fromDate": nextProps.startDate });
 		}
 
-		if ( !this.state.hasUserModified && nextProps.endDate !== this.state.toDate) {
-			console.log("end date " + nextProps.endDate);
+		if (!this.state.hasUserModified && nextProps.endDate !== this.state.toDate) {
 			this.setState({ "toDate": nextProps.endDate });
 		}
 
 	}
 
 	render() {
+		const errors = this.state.errors.map((error, index) => (<Form.Help key={index} color="danger">{error}</Form.Help>));
 		return (
 			<Container className="spacedContainer">
 				<Form.Field kind="group">
@@ -66,6 +102,9 @@ class FitnessWeekDateFilter extends Component {
 					<Form.Control>
 						<Button color="info" onClick={this.handleClickFilterButton}>Filter</Button>
 					</Form.Control>
+				</Form.Field>
+				<Form.Field>
+					{errors}
 				</Form.Field>
 			</Container>
 		);
