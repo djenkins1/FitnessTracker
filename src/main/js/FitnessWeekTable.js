@@ -1,6 +1,6 @@
 const React = require('react');
 import FitnessWeek from './FitnessWeek';
-import { Table, Heading, Container } from 'react-bulma-components';
+import { Table, Heading, Box } from 'react-bulma-components';
 
 class FitnessWeekTable extends React.Component {
 	render() {
@@ -8,7 +8,7 @@ class FitnessWeekTable extends React.Component {
 			<FitnessWeek key={week.id} week={week} />
 		);
 		return (
-			<Container>
+			<Box>
 				<Heading>{this.props.title}</Heading>
 				<Table>
 					<thead>
@@ -26,7 +26,7 @@ class FitnessWeekTable extends React.Component {
 						{weeks}
 					</tbody>
 				</Table>
-			</Container>
+			</Box>
 		)
 	}
 }

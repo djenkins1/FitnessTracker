@@ -61,15 +61,15 @@ class App extends React.Component {
 
 	}
 
-	getDefaultDatesForSum(){
+	getDefaultDatesForSum() {
 		const JANUARY = 0;//months start at 0
 		const DECEMBER = 11;//months start at 0
 		Moment.locale('en');//TODO: pull this out to some configuration?
 		const startOfYear = Moment(new Date(new Date().getFullYear(), JANUARY, 1)).format('YYYY-MM-DD');
 		const endOfYear = Moment(new Date(new Date().getFullYear(), DECEMBER, 31)).format('YYYY-MM-DD');
 		return {
-			"startDate" : startOfYear,
-			"endDate" : endOfYear
+			"startDate": startOfYear,
+			"endDate": endOfYear
 		};
 	}
 
@@ -98,7 +98,7 @@ class App extends React.Component {
 			<Router>
 				<Navbar color="info">
 					<Navbar.Brand>
-						<Navbar.Item renderAs="span">Fitness Tracker</Navbar.Item>
+						<Navbar.Item renderAs="span"><i class="fas fa-running"></i> Fitness Tracker</Navbar.Item>
 						<Navbar.Burger data-target="navLinksMenu" />
 					</Navbar.Brand>
 					<Navbar.Menu className="is-active">

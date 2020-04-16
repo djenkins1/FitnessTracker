@@ -12,7 +12,6 @@ class FitnessWeekGraph extends Component {
 			const chartDomain = [0, largestValue * 1.25];
 			return (
 				<Container>
-					<Heading>{this.props.title}</Heading>
 					<XYPlot
 						xType="time"
 						width={this.props.chartWidth}
