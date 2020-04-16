@@ -14,6 +14,8 @@ import FitnessWeekGraphFilter from './FitnessWeekGraphFilter';
 import FitnessWeekForm from "./FitnessWeekForm";
 import FitnessWeekDateFilter from "./FitnessWeekDateFilter";
 import FitnessWeekSumReport from "./FitnessWeekSumReport";
+import ErrorHandlerRedirect from "./ErrorHandlerRedirect";
+import ErrorPage from "./ErrorPage";
 
 
 class App extends React.Component {
@@ -46,21 +48,90 @@ class App extends React.Component {
 		this.getDateFilterDetails = this.getDateFilterDetails.bind(this);
 		this.getSumDataForDates = this.getSumDataForDates.bind(this);
 		this.getSumsByMonths = this.getSumsByMonths.bind(this);
+		this.getAllFitnessData = this.getAllFitnessData.bind(this);
+		this.clearErrorMessageState = this.clearErrorMessageState.bind(this);
 	}
 
 	componentDidMount() {
-		const defaultDates = this.getDefaultDatesForSum();
 		this.setState({ "loading": true });
-		fetch('./rest/fitnessWeeks')
-			.then(res => res.json())
-			.then((data) => {
-				this.setState({ fitnessWeeks: data });
-				this.sortWeeks();
-				this.getSumDataForDates(defaultDates.startDate, defaultDates.endDate);
-				this.getSumsByMonths(defaultDates.startDate, defaultDates.endDate);
-			})
-			.catch(console.log);
+		this.getAllFitnessData();
+	}
 
+	render() {
+		const dateFilter = this.getDateFilterDetails();
+		const defaultDatesForSum = this.getDefaultDatesForSum();
+		return (
+			<Router>
+				<Navbar color="info">
+					<Navbar.Brand>
+						<Navbar.Item renderAs="span"><i className="fas fa-running"></i> Fitness Tracker</Navbar.Item>
+						<Navbar.Burger data-target="navLinksMenu" />
+					</Navbar.Brand>
+					<Navbar.Menu className="is-active">
+						<Navbar.Container>
+							<Link onClick={this.clearErrorMessageState} className="navbar-item" to="/" >Home</Link>
+							<Link onClick={this.clearErrorMessageState} className="navbar-item" to="/graph" >Daily Graph</Link>
+							<Link onClick={this.clearErrorMessageState} className="navbar-item" to="/sums">Monthly Graph</Link>
+							<Link onClick={this.clearErrorMessageState} className="navbar-item" to="/sumsAnnual" >Annual Report</Link>
+							<Link onClick={this.clearErrorMessageState} className="navbar-item" to="/create" >Add Week</Link>
+						</Navbar.Container>
+					</Navbar.Menu>
+				</Navbar>
+				<Switch>
+					<Route path="/graph">
+						<ErrorHandlerRedirect error={this.state.error} >
+							<FitnessWeekGraphFilter error={this.state.error} showByX="dateRecorded" showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeeks}>
+								<FitnessWeekDateFilter {...dateFilter} onFilterDates={this.handleFilterDates} />
+							</FitnessWeekGraphFilter>
+						</ErrorHandlerRedirect>
+					</Route>
+					<Route path="/create">
+						<ErrorHandlerRedirect error={this.state.error} >
+							<FitnessWeekForm error={this.state.error} title="Add Week" addWeek={this.addWeek} />
+						</ErrorHandlerRedirect>
+					</Route>
+					<Route path="/sumsAnnual">
+						<ErrorHandlerRedirect error={this.state.error} >
+							<FitnessWeekSumReport error={this.state.error} title="Annual Report" sumData={this.state.sumForWeeks}>
+								<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumDataForDates} />
+							</FitnessWeekSumReport>
+						</ErrorHandlerRedirect>
+					</Route>
+					<Route path="/sums">
+						<ErrorHandlerRedirect error={this.state.error} >
+							<FitnessWeekGraphFilter error={this.state.error} showByX="endDate" showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeekSums}>
+								<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumsByMonths} />
+							</FitnessWeekGraphFilter>
+						</ErrorHandlerRedirect>
+					</Route>
+					<Route path="/error">
+						<ErrorPage error={this.state.error} />
+					</Route>
+					<Route path="/">
+						<ErrorHandlerRedirect error={this.state.error} >
+							<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} />
+						</ErrorHandlerRedirect>
+					</Route>
+				</Switch>
+			</Router>
+		);
+	}
+
+	addWeek(createdWeek) {
+		this.state.fitnessWeeks.push(createdWeek);
+		this.sortWeeks();
+		this.setState({ "loading": false });
+	}
+
+	sortWeeks() {
+		this.state.fitnessWeeks.sort(this.compareWeeks);
+	}
+
+	compareWeeks(a, b) {
+		if (a.dateRecorded > b.dateRecorded) return 1;
+		if (b.dateRecorded > a.dateRecorded) return -1;
+
+		return 0;
 	}
 
 	getDefaultDatesForSum() {
@@ -91,74 +162,41 @@ class App extends React.Component {
 
 	}
 
-	render() {
-		const dateFilter = this.getDateFilterDetails();
-		const defaultDatesForSum = this.getDefaultDatesForSum();
-		return (
-			<Router>
-				<Navbar color="info">
-					<Navbar.Brand>
-						<Navbar.Item renderAs="span"><i className="fas fa-running"></i> Fitness Tracker</Navbar.Item>
-						<Navbar.Burger data-target="navLinksMenu" />
-					</Navbar.Brand>
-					<Navbar.Menu className="is-active">
-						<Navbar.Container>
-							<Link className="navbar-item" to="/" >Home</Link>
-							<Link className="navbar-item" to="/graph" >Daily Graph</Link>
-							<Link className="navbar-item" to="/sums">Monthly Graph</Link>
-							<Link className="navbar-item" to="/sumsAnnual" >Annual Report</Link>
-							<Link className="navbar-item" to="/create" >Add Week</Link>
-						</Navbar.Container>
-					</Navbar.Menu>
-				</Navbar>
-				<Switch>
-					<Route path="/graph">
-						<FitnessWeekGraphFilter showByX="dateRecorded" showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeeks}>
-							<FitnessWeekDateFilter {...dateFilter} onFilterDates={this.handleFilterDates} />
-						</FitnessWeekGraphFilter>
-					</Route>
-					<Route path="/create">
-						<FitnessWeekForm title="Add Week" addWeek={this.addWeek} />
-					</Route>
-					<Route path="/sumsAnnual">
-						<FitnessWeekSumReport title="Annual Report" sumData={this.state.sumForWeeks}>
-							<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumDataForDates} />
-						</FitnessWeekSumReport>
-					</Route>
-					<Route path="/sums">
-						<FitnessWeekGraphFilter showByX="endDate" showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeekSums}>
-							<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumsByMonths} />
-						</FitnessWeekGraphFilter>
-					</Route>
-					<Route path="/">
-						<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} />
-					</Route>
-				</Switch>
-			</Router>
-		);
+	clearErrorMessageState() {
+		this.setState({ "error": null });
 	}
 
-	addWeek(createdWeek) {
-		this.state.fitnessWeeks.push(createdWeek);
-		this.sortWeeks();
-		this.setState({ "loading": false });
-	}
+	getAllFitnessData() {
+		const defaultDates = this.getDefaultDatesForSum();
+		fetch('./rest/fitnessWeeks')
+			.then(res => {
+				if (!res.ok) {
+					if (res.status == 404) {
+						throw Error("Problem getting data, fitness data not found.")
+					}
+					else {
+						throw Error(res.statusText);
+					}
 
-	sortWeeks() {
-		this.state.fitnessWeeks.sort(this.compareWeeks);
-	}
-
-	compareWeeks(a, b) {
-		if (a.dateRecorded > b.dateRecorded) return 1;
-		if (b.dateRecorded > a.dateRecorded) return -1;
-
-		return 0;
+				}
+				else {
+					res.json().then((data) => {
+						this.setState({ fitnessWeeks: data });
+						this.sortWeeks();
+						this.getSumDataForDates(defaultDates.startDate, defaultDates.endDate);
+						this.getSumsByMonths(defaultDates.startDate, defaultDates.endDate);
+					});
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+				this.setState({ "error": error.message });
+			});
 	}
 
 	getSumDataForDates(startDate, endDate) {
 		this.setState({ "loading": true });
 		const url = './rest/fitnessWeeks/sum/between?startDate=' + startDate + '&endDate=' + endDate;
-		//TODO: catch 404 error by checking response.status in .then
 		fetch(url, {
 			method: 'GET',
 			mode: 'cors',
@@ -170,12 +208,27 @@ class App extends React.Component {
 			redirect: 'error',
 			referrerPolicy: 'no-referrer'
 		})
-			.then(res => res.json())
-			.then((data) => {
-				this.setState({ sumForWeeks: data });
-				this.setState({ "loading": false });
+			.then(res => {
+				if (!res.ok) {
+					if (res.status == 404) {
+						throw Error("Problem getting data, sum data not found for dates selected.")
+					}
+					else {
+						throw Error(res.statusText);
+					}
+
+				}
+				else {
+					res.json().then((data) => {
+						this.setState({ sumForWeeks: data });
+						this.setState({ "loading": false });
+					});
+				}
 			})
-			.catch(console.log);
+			.catch((error) => {
+				console.log(error);
+				this.setState({ "error": error.message });
+			});
 	}
 
 	handleFilterDates(startDate, endDate) {
@@ -192,19 +245,33 @@ class App extends React.Component {
 			redirect: 'error',
 			referrerPolicy: 'no-referrer'
 		})
-			.then(res => res.json())
-			.then((data) => {
-				this.setState({ fitnessWeeks: data });
-				this.sortWeeks();
-				this.setState({ "loading": false });
+			.then(res => {
+				if (!res.ok) {
+					if (res.status == 404) {
+						throw Error("Problem getting data, fitness data not found for dates selected.")
+					}
+					else {
+						throw Error(res.statusText);
+					}
+
+				}
+				else {
+					res.json().then((data) => {
+						this.setState({ fitnessWeeks: data });
+						this.sortWeeks();
+						this.setState({ "loading": false });
+					});
+				}
 			})
-			.catch(console.log);
+			.catch((error) => {
+				console.log(error);
+				this.setState({ "error": error.message });
+			});
 	}
 
 	getSumsByMonths(startDate, endDate) {
 		this.setState({ "loading": true });
 		const url = './rest/fitnessWeeks/sums?startDate=' + startDate + '&endDate=' + endDate;
-		//TODO: catch 404 error by checking response.status in .then
 		fetch(url, {
 			method: 'GET',
 			mode: 'cors',
@@ -216,12 +283,28 @@ class App extends React.Component {
 			redirect: 'error',
 			referrerPolicy: 'no-referrer'
 		})
-			.then(res => res.json())
-			.then((data) => {
-				this.setState({ fitnessWeekSums: data });
-				this.setState({ "loading": false });
+			.then(res => {
+				if (!res.ok) {
+					if (res.status == 404) {
+						throw Error("Problem getting data, sum data not found.")
+					}
+					else {
+						throw Error(res.statusText);
+					}
+
+				}
+				else {
+					res.json().then((data) => {
+						this.setState({ fitnessWeekSums: data });
+						this.setState({ "loading": false });
+						this.setState({ "error": undefined });
+					});
+				}
 			})
-			.catch(console.log);
+			.catch((error) => {
+				console.log(error);
+				this.setState({ "error": error.message });
+			});
 	}
 }
 
