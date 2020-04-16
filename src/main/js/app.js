@@ -50,6 +50,7 @@ class App extends React.Component {
 		this.getSumsByMonths = this.getSumsByMonths.bind(this);
 		this.getAllFitnessData = this.getAllFitnessData.bind(this);
 		this.clearErrorMessageState = this.clearErrorMessageState.bind(this);
+		this.handleError = this.handleError.bind(this);
 	}
 
 	componentDidMount() {
@@ -87,7 +88,7 @@ class App extends React.Component {
 					</Route>
 					<Route path="/create">
 						<ErrorHandlerRedirect error={this.state.error} >
-							<FitnessWeekForm error={this.state.error} title="Add Week" addWeek={this.addWeek} />
+							<FitnessWeekForm handleError={this.handleError} title="Add Week" addWeek={this.addWeek} />
 						</ErrorHandlerRedirect>
 					</Route>
 					<Route path="/sumsAnnual">
@@ -159,7 +160,6 @@ class App extends React.Component {
 		else {
 			return {};
 		}
-
 	}
 
 	clearErrorMessageState() {
@@ -175,7 +175,7 @@ class App extends React.Component {
 						throw Error("Problem getting data, fitness data not found.")
 					}
 					else {
-						throw Error(res.statusText);
+						throw Error("An unexpected problem occurred, response code: " + res.status);
 					}
 
 				}
@@ -189,8 +189,7 @@ class App extends React.Component {
 				}
 			})
 			.catch((error) => {
-				console.log(error);
-				this.setState({ "error": error.message });
+				this.handleError(error);
 			});
 	}
 
@@ -214,7 +213,7 @@ class App extends React.Component {
 						throw Error("Problem getting data, sum data not found for dates selected.")
 					}
 					else {
-						throw Error(res.statusText);
+						throw Error("An unexpected problem occurred, response code: " + res.status);
 					}
 
 				}
@@ -226,8 +225,7 @@ class App extends React.Component {
 				}
 			})
 			.catch((error) => {
-				console.log(error);
-				this.setState({ "error": error.message });
+				this.handleError(error);
 			});
 	}
 
@@ -251,7 +249,7 @@ class App extends React.Component {
 						throw Error("Problem getting data, fitness data not found for dates selected.")
 					}
 					else {
-						throw Error(res.statusText);
+						throw Error("An unexpected problem occurred, response code: " + res.status);
 					}
 
 				}
@@ -264,8 +262,7 @@ class App extends React.Component {
 				}
 			})
 			.catch((error) => {
-				console.log(error);
-				this.setState({ "error": error.message });
+				this.handleError(error);
 			});
 	}
 
@@ -289,7 +286,7 @@ class App extends React.Component {
 						throw Error("Problem getting data, sum data not found.")
 					}
 					else {
-						throw Error(res.statusText);
+						throw Error("An unexpected problem occurred, response code: " + res.status);
 					}
 
 				}
@@ -302,9 +299,13 @@ class App extends React.Component {
 				}
 			})
 			.catch((error) => {
-				console.log(error);
-				this.setState({ "error": error.message });
+				this.handleError(error);
 			});
+	}
+
+	handleError(error) {
+		console.log(error);
+		this.setState({ "error": error.message });
 	}
 }
 

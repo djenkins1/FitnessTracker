@@ -362,12 +362,32 @@ class FitnessWeekForm extends Component {
 			redirect: 'error',
 			referrerPolicy: 'no-referrer',
 			body: JSON.stringify(newWeekData)
-		}).then(res => res.json())
-			.then((createdWeek) => {
-				this.props.addWeek(createdWeek);
-				this.setState({ "redirect": true });
+		})
+			.then(res => {
+				if (!res.ok) {
+					if (res.status == 404) {
+						throw Error("Problem creating week, could not find form endpoint.")
+					}
+					else if (res.status == 400) {
+						//front end validation should catch anything bad in request
+						//if it does not then show an error page
+						throw Error("Validation failed for creating week.");
+					}
+					else {
+						throw Error("An unexpected problem occurred, response code: " + res.status);
+					}
+
+				}
+				else {
+					res.json().then((createdWeek) => {
+						this.props.addWeek(createdWeek);
+						this.setState({ "redirect": true });
+					});
+				}
 			})
-			.catch(console.log);
+			.catch((error) => {
+				this.props.handleError(error);
+			});
 	}
 
 	handleCancelClick(event) {
