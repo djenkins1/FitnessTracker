@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { XYPlot, LineSeries, LabelSeries, XAxis, YAxis } from 'react-vis';
+import { XYPlot, LineSeries, LabelSeries, XAxis, YAxis, HorizontalGridLines, VerticalGridLines } from 'react-vis';
 import { Box, Heading, Container, Notification } from 'react-bulma-components';
 
 class FitnessWeekGraph extends Component {
 	render() {
 		if (this.props.weeks && this.props.weeks.length > 0) {
-			const data = this.convertWeeksToData(this.props.weeks, this.props.showByX, this.props.showByY );
+			const data = this.convertWeeksToData(this.props.weeks, this.props.showByX, this.props.showByY);
 			//find the largest value and add 25 percent to it for better visibility
 			const attr = this.props.showByY;
 			var largestValue = Math.max.apply(Math, this.props.weeks.map(function (o) { return o[attr]; }));
@@ -13,13 +13,17 @@ class FitnessWeekGraph extends Component {
 			return (
 				<Container>
 					<XYPlot
+						tickTotal={data.length}
+						margin={{ left: 100, bottom: 100 }}
 						xType="time"
 						width={this.props.chartWidth}
 						height={this.props.chartHeight}
 						yDomain={chartDomain}
 					>
-						<XAxis />
+						<XAxis tickLabelAngle={-90} />
 						<YAxis />
+						<HorizontalGridLines />
+						<VerticalGridLines />
 						<LineSeries data={data} />
 					</XYPlot>
 				</Container>
@@ -37,7 +41,7 @@ class FitnessWeekGraph extends Component {
 
 	}
 
-	convertWeeksToData(weeks, xAttr, yAttr ) {
+	convertWeeksToData(weeks, xAttr, yAttr) {
 		var toReturn = [];
 		var newWeekPoint;
 
