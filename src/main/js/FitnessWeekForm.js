@@ -265,6 +265,12 @@ class FitnessWeekForm extends Component {
 					fieldTitle + " must not be empty."
 				];
 			}
+			else if (value.length > 20) {
+				//must not be more than 20 characters
+				formErrors[formAttr] = [
+					fieldTitle + " must not be more than 20 characters."
+				];
+			}
 			else {
 				formErrors[formAttr] = [];//set to empty list if valid
 			}
