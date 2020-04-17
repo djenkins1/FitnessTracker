@@ -21,14 +21,20 @@ class FitnessWeekDateFilter extends Component {
 		const startAsMomentDate = Moment(startDate, "YYYY-MM-DD");
 		const endAsMomentDate = Moment(endDate, "YYYY-MM-DD");
 		const validationErrors = [];
-		if (!startAsMomentDate.isValid()) {
+		if (startDate == '') {
+			validationErrors.push("From date must not be empty.");
+		}
+		else if (!startAsMomentDate.isValid()) {
 			validationErrors.push("From date must be a date of the format 2020-12-31.");
 		}
 		else if (startAsMomentDate.isAfter(today)) {
 			validationErrors.push("From date must not be in the future.");
 		}
 
-		if (!endAsMomentDate.isValid()) {
+		if (endDate == '') {
+			validationErrors.push("To date must not be empty.");
+		}
+		else if (!endAsMomentDate.isValid()) {
 			validationErrors.push("To date must be a date of the format 2020-12-31.");
 		}
 		else if (endAsMomentDate.isAfter(today)) {
@@ -36,6 +42,9 @@ class FitnessWeekDateFilter extends Component {
 		}
 		else if (startAsMomentDate.isValid() && startAsMomentDate.isAfter(endAsMomentDate)) {
 			validationErrors.push("From date cannot occur after To date.");
+		}
+		else if (startAsMomentDate.isValid() && startAsMomentDate.isSame(endAsMomentDate)) {
+			validationErrors.push("From date cannot be the same as To date.");
 		}
 
 		return validationErrors;
@@ -55,16 +64,13 @@ class FitnessWeekDateFilter extends Component {
 
 	handleClickFilterButton(event) {
 		event.preventDefault();
-		if (this.state.fromDate && this.state.toDate) {
-			const validationErrors = this.validateDates(this.state.fromDate, this.state.toDate);
-			if (validationErrors && validationErrors.length > 0) {
-				this.setState({ "errors": validationErrors });
-			}
-			else {
-				this.setState({ "errors": [] });
-				this.props.onFilterDates(this.state.fromDate, this.state.toDate);
-			}
-
+		const validationErrors = this.validateDates(this.state.fromDate, this.state.toDate);
+		if (validationErrors && validationErrors.length > 0) {
+			this.setState({ "errors": validationErrors });
+		}
+		else {
+			this.setState({ "errors": [] });
+			this.props.onFilterDates(this.state.fromDate, this.state.toDate);
 		}
 	}
 
