@@ -78,7 +78,7 @@ class FitnessWeekForm extends Component {
 						<Form.Control>
 							<Form.Input type="number" step="0.1" min="0" name="totalCalories" placeholder="250.25" value={this.state.totalCalories} onChange={this.handleInputChange} />
 						</Form.Control>
-						<Button tabIndex="-1" color="info" onClick={this.handleCalorieAddClick}>+999.9</Button>
+						<Button outlined={true} tabIndex="-1" color="info" onClick={this.handleCalorieAddClick}>+999.9</Button>
 					</Form.Field>
 					<Form.Field>
 						<FieldValidHelper errors={this.state.formErrors["totalCalories"]} />
@@ -131,10 +131,10 @@ class FitnessWeekForm extends Component {
 					</Form.Field>
 					<Form.Field kind="group">
 						<Form.Control>
-							<Button color="primary" loading={this.state.loading}>Submit</Button>
+							<Button outlined={true} color="primary" loading={this.state.loading}>Submit</Button>
 						</Form.Control>
 						<Form.Control>
-							<Button onClick={this.handleCancelClick} color="danger">Cancel</Button>
+							<Button outlined={true} onClick={this.handleCancelClick} color="danger">Cancel</Button>
 						</Form.Control>
 					</Form.Field>
 				</form>

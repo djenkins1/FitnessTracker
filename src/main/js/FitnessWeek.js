@@ -14,8 +14,8 @@ class FitnessWeek extends React.Component {
 				<td>{this.props.week.daysExercised}</td>
 				<td>
 					<Button.Group size="small" hasAddons={true}>
-						<Button title="Edit" color="info" ><i className="fas fa-edit"></i></Button>
-						<Button title="Delete" color="danger" onClick={() => { this.props.handleClickDelete(id) }}><i className="fas fa-trash"></i></Button>
+						<Button outlined={true} title="Edit" color="info" ><i className="fas fa-edit"></i></Button>
+						<Button outlined={true} title="Delete" color="danger" onClick={() => { this.props.handleClickDelete(id) }}><i className="fas fa-trash"></i></Button>
 					</Button.Group>
 				</td>
 			</tr>

@@ -105,7 +105,7 @@ class FitnessWeekDateFilter extends Component {
 						<Form.Input type="date" name="toDate" value={this.state.toDate} onChange={this.handleChangeDate} />
 					</Form.Control>
 					<Form.Control>
-						<Button color="info" onClick={this.handleClickFilterButton}>Filter</Button>
+						<Button outlined={true} color="info" onClick={this.handleClickFilterButton}>Filter</Button>
 					</Form.Control>
 				</Form.Field>
 				<Form.Field>
