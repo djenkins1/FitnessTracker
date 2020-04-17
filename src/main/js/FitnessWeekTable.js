@@ -5,7 +5,7 @@ import { Table, Heading, Box } from 'react-bulma-components';
 class FitnessWeekTable extends React.Component {
 	render() {
 		const weeks = this.props.weeks.map(week =>
-			<FitnessWeek key={week.id} week={week} />
+			<FitnessWeek key={week.id} week={week} handleClickDelete={this.props.handleClickDelete} />
 		);
 		return (
 			<Box>
@@ -20,6 +20,7 @@ class FitnessWeekTable extends React.Component {
 							<th><abbr title="Miles To Date">MTD</abbr></th>
 							<th><abbr title="Exercise Type">Type</abbr></th>
 							<th><abbr title="Days Exercised">Days</abbr></th>
+							<th>Actions</th>
 						</tr>
 					</thead>
 					<tbody>

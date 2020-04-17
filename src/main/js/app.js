@@ -51,6 +51,7 @@ class App extends React.Component {
 		this.getAllFitnessData = this.getAllFitnessData.bind(this);
 		this.clearErrorMessageState = this.clearErrorMessageState.bind(this);
 		this.handleError = this.handleError.bind(this);
+		this.handleClickDelete = this.handleClickDelete.bind(this);
 	}
 
 	componentDidMount() {
@@ -110,7 +111,7 @@ class App extends React.Component {
 					</Route>
 					<Route path="/">
 						<ErrorHandlerRedirect error={this.state.error} >
-							<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} />
+							<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} handleClickDelete={this.handleClickDelete} />
 						</ErrorHandlerRedirect>
 					</Route>
 				</Switch>
@@ -222,6 +223,59 @@ class App extends React.Component {
 						this.setState({ sumForWeeks: data });
 						this.setState({ "loading": false });
 					});
+				}
+			})
+			.catch((error) => {
+				this.handleError(error);
+			});
+	}
+
+	handleClickDelete(id) {
+		this.setState({ "loading": true });
+		const url = '/rest/fitnessWeek/' + id;
+		var indexOfDeleted = -1;
+		//first check to see if the id given is even in the list of weeks
+		for (var i = 0; i < this.state.fitnessWeeks.length; i++) {
+			if (this.state.fitnessWeeks[i].id == id) {
+				indexOfDeleted = i;
+				break;
+			}
+		}
+
+		//if the id given is not found then go to error page
+		if (indexOfDeleted == -1) {
+			this.setState({ "error": "Could not find week to be deleted with key: " + id });
+			return;
+		}
+
+		//send a delete request for the id provided
+		fetch(url, {
+			method: 'DELETE',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'error',
+			referrerPolicy: 'no-referrer'
+		})
+			.then(res => {
+				if (!res.ok) {
+					if (res.status == 404) {
+						throw Error("Problem deleting data, fitness data not found for id selected.")
+					}
+					else {
+						throw Error("An unexpected problem occurred, response code: " + res.status);
+					}
+
+				}
+				else {
+					//if delete returns 200 we do not care about the response data
+					//delete the week from the list by copying and splicing
+					const allWeeks = [...this.state.fitnessWeeks];
+					allWeeks.splice(indexOfDeleted, 1);
+					this.setState({ loading: false, fitnessWeeks: allWeeks });
 				}
 			})
 			.catch((error) => {
