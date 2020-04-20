@@ -1,6 +1,7 @@
 const React = require('react');
 import FitnessWeek from './FitnessWeek';
 import { Table, Heading, Box } from 'react-bulma-components';
+import { Redirect } from 'react-router-dom';
 import ConfirmModal from './ConfirmModal';
 
 class FitnessWeekTable extends React.Component {
@@ -8,16 +9,24 @@ class FitnessWeekTable extends React.Component {
 		super(props);
 		this.state = {
 			"showModal": false,
-			"deleteId": null
+			"deleteId": null,
+			"redirectToEdit": false
 		};
 
 		this.handleClickYes = this.handleClickYes.bind(this);
 		this.closeModal = this.closeModal.bind(this);
 		this.handleClickDelete = this.handleClickDelete.bind(this);
+		this.handleClickEdit = this.handleClickEdit.bind(this);
 	}
 	render() {
+		if (this.state.redirectToEdit) {
+			return (
+				<Redirect to="/create" />
+			);
+		}
+
 		const weeks = this.props.weeks.map(week =>
-			<FitnessWeek key={week.dateRecorded + "_" + week.id} week={week} handleClickDelete={this.handleClickDelete} />
+			<FitnessWeek key={week.dateRecorded + "_" + week.id} week={week} handleClickDelete={this.handleClickDelete} handleClickEdit={this.handleClickEdit} />
 		);
 		const modalMessageBody = "Are you sure you wish to delete the week?";//TODO: show details of week
 		return (
@@ -56,6 +65,11 @@ class FitnessWeekTable extends React.Component {
 
 	closeModal() {
 		this.setState({ "showModal": false });
+	}
+
+	handleClickEdit(id) {
+		this.props.handleClickEdit(id);
+		this.setState({ "redirectToEdit": true });
 	}
 }
 

@@ -4,26 +4,19 @@ import { Redirect } from 'react-router-dom';
 import FieldValidHelper from './FieldValidHelper';
 import Moment from 'moment';
 
-
 class FitnessWeekForm extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			"totalTime": 0,
-			"totalMiles": 0,
-			"totalCalories": 0,
-			"milesToDate": 0,
-			"daysExercised": {
-				"monday": false,
-				"tuesday": false,
-				"wednesday": false,
-				"thursday": false,
-				"friday": false,
-				"saturday": false,
-				"sunday": false
-			},
-			"dateRecorded": "",
-			"exerciseType": "Cycling",//default value
+			"id": (props.week && props.week.id ? props.week.id : 0),
+			"totalTime": (props.week && props.week.totalTime ? props.week.totalTime : 0),
+			"totalMiles": (props.week && props.week.totalMiles ? props.week.totalMiles : 0),
+			"totalCalories": (props.week && props.week.totalCalories ? props.week.totalCalories : 0),
+			"milesToDate": (props.week && props.week.milesToDate ? props.week.milesToDate : 0),
+			"daysExercised": this.getDaysExercisedFromWeek(props.week),
+			"dateRecorded": (props.week && props.week.dateRecorded ? props.week.dateRecorded : ''),
+			"createdTs": (props.week && props.week.createdTs ? props.week.createdTs : ''),
+			"exerciseType": (props.week && props.week.exerciseType ? props.week.exerciseType : "Cycling"),//default value
 			"redirect": false,
 			"formValid": false,
 			"formErrors": {}
@@ -36,6 +29,8 @@ class FitnessWeekForm extends Component {
 		this.validateForm = this.validateForm.bind(this);
 		this.validateField = this.validateField.bind(this);
 		this.validateFieldAndChangeState = this.validateFieldAndChangeState.bind(this);
+		this.createWeek = this.createWeek.bind(this);
+		this.editWeek = this.editWeek.bind(this);
 	}
 
 	render() {
@@ -324,7 +319,14 @@ class FitnessWeekForm extends Component {
 	handleSubmit(event) {
 		event.preventDefault();
 		if (this.validateForm()) {
-			this.createWeek(event, this.state);
+			//if week and week id are defined then this user is editing not creating
+			if (this.props.week && this.props.week.id) {
+				this.editWeek(event, this.state);
+			}
+			else {
+				this.createWeek(event, this.state);
+			}
+
 		}
 		else {
 			console.log("validateForm() returned false");
@@ -333,12 +335,14 @@ class FitnessWeekForm extends Component {
 
 	convertStateToFormData(stateData) {
 		var toReturn = {
+			"id": stateData.id,
 			"totalTime": stateData.totalTime,
 			"totalMiles": stateData.totalMiles,
 			"totalCalories": stateData.totalCalories,
 			"milesToDate": stateData.milesToDate,
 			"dateRecorded": stateData.dateRecorded,
-			"exerciseType": stateData.exerciseType
+			"exerciseType": stateData.exerciseType,
+			"createdTs": stateData.createdTs
 		};
 
 		var dayStr = "";
@@ -351,6 +355,49 @@ class FitnessWeekForm extends Component {
 		}
 		toReturn["daysExercised"] = dayStr;
 		return toReturn;
+	}
+
+	editWeek(event, formData) {
+		this.setState({ "loading": true });
+		const url = "./rest/fitnessWeek/update";
+		const editWeekData = this.convertStateToFormData(formData);
+		fetch(url, {
+			method: 'PUT',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'error',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify(editWeekData)
+		})
+			.then(res => {
+				if (!res.ok) {
+					if (res.status == 404) {
+						throw Error("Problem editing week, could not find form endpoint.")
+					}
+					else if (res.status == 400) {
+						//front end validation should catch anything bad in request
+						//if it does not then show an error page
+						throw Error("Validation failed for editing week.");
+					}
+					else {
+						throw Error("An unexpected problem occurred, response code: " + res.status);
+					}
+
+				}
+				else {
+					res.json().then((updatedWeek) => {
+						this.props.editWeek(updatedWeek);
+						this.setState({ "redirect": true });
+					});
+				}
+			})
+			.catch((error) => {
+				this.props.handleError(error);
+			});
 	}
 
 	createWeek(event, formData) {
@@ -399,6 +446,64 @@ class FitnessWeekForm extends Component {
 	handleCancelClick(event) {
 		event.preventDefault();
 		this.setState({ "redirect": true });
+	}
+
+	getDaysExercisedFromWeek(week) {
+
+		const daysExercised = {
+			"monday": false,
+			"tuesday": false,
+			"wednesday": false,
+			"thursday": false,
+			"friday": false,
+			"saturday": false,
+			"sunday": false
+		};
+
+		//if the week is defined then translate to object
+		if (week && week.daysExercised) {
+			const daysSplitBySlash = week.daysExercised.split("/");
+			for (var index = 0; index < daysSplitBySlash.length; index++) {
+				var day = daysSplitBySlash[index];
+				switch (day) {
+					case 'M':
+						daysExercised["monday"] = true;
+						break;
+					case 'T':
+						//could be tuesday or thursday
+						if (daysExercised["tuesday"]) {
+							daysExercised["thursday"] = true;
+						}
+						else {
+							daysExercised["tuesday"] = true;
+						}
+						break;
+					case 'W':
+						daysExercised["wednesday"] = true;
+						break;
+					case 'F':
+						daysExercised["friday"] = true;
+						break;
+					case 'S':
+						//could be saturday or sunday
+						if (daysExercised["saturday"]) {
+							daysExercised["sunday"] = true;
+						}
+						else {
+							daysExercised["saturday"] = true;
+						}
+						break;
+					default:
+						console.log("Could not translate the following to a day of the week: " + day);
+						break;
+				}
+			}
+		}
+		else {
+			//do nothing, the daysExercised object has default values so return it as normal
+		}
+
+		return daysExercised;
 	}
 }
 

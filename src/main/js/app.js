@@ -39,10 +39,14 @@ class App extends React.Component {
 					"title": "Total Time",
 					"attr": "totalTime"
 				}
-			], "sumForWeeks": {}, "fitnessWeekSums": []
+			],
+			"sumForWeeks": {},
+			"fitnessWeekSums": [],
+			"weekEditIndex": -1
 		};
 
 		this.addWeek = this.addWeek.bind(this);
+		this.editWeek = this.editWeek.bind(this);
 		this.sortWeeks = this.sortWeeks.bind(this);
 		this.handleFilterDates = this.handleFilterDates.bind(this);
 		this.getDateFilterDetails = this.getDateFilterDetails.bind(this);
@@ -52,6 +56,9 @@ class App extends React.Component {
 		this.clearErrorMessageState = this.clearErrorMessageState.bind(this);
 		this.handleError = this.handleError.bind(this);
 		this.handleClickDelete = this.handleClickDelete.bind(this);
+		this.findWeekIndexById = this.findWeekIndexById.bind(this);
+		this.handleClickEdit = this.handleClickEdit.bind(this);
+
 	}
 
 	componentDidMount() {
@@ -62,6 +69,7 @@ class App extends React.Component {
 	render() {
 		const dateFilter = this.getDateFilterDetails();
 		const defaultDatesForSum = this.getDefaultDatesForSum();
+		const weekFromEditIndex = (this.state.weekEditIndex >= 0 ? this.state.fitnessWeeks[this.state.weekEditIndex] : {});
 		return (
 			<Router>
 				<Navbar color="info">
@@ -89,7 +97,7 @@ class App extends React.Component {
 					</Route>
 					<Route path="/create">
 						<ErrorHandlerRedirect error={this.state.error} >
-							<FitnessWeekForm handleError={this.handleError} title="Add Week" addWeek={this.addWeek} />
+							<FitnessWeekForm handleError={this.handleError} title="Add Week" addWeek={this.addWeek} editWeek={this.editWeek} week={weekFromEditIndex} />
 						</ErrorHandlerRedirect>
 					</Route>
 					<Route path="/sumsAnnual">
@@ -111,7 +119,7 @@ class App extends React.Component {
 					</Route>
 					<Route path="/">
 						<ErrorHandlerRedirect error={this.state.error} >
-							<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} handleClickDelete={this.handleClickDelete} />
+							<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} handleClickDelete={this.handleClickDelete} handleClickEdit={this.handleClickEdit} />
 						</ErrorHandlerRedirect>
 					</Route>
 				</Switch>
@@ -123,6 +131,18 @@ class App extends React.Component {
 		this.state.fitnessWeeks.push(createdWeek);
 		this.sortWeeks();
 		this.setState({ "loading": false });
+	}
+
+	editWeek(updatedWeek) {
+		const index = this.findWeekIndexById(updatedWeek.id);
+		if (index == -1) {
+			this.setState({ "error": "Could not find week to edit with id: " + updatedWeek.id });
+		}
+		else {
+			this.state.fitnessWeeks[index] = updatedWeek;
+			this.sortWeeks();
+			this.setState({ "loading": false });
+		}
 	}
 
 	sortWeeks() {
@@ -164,7 +184,7 @@ class App extends React.Component {
 	}
 
 	clearErrorMessageState() {
-		this.setState({ "error": null });
+		this.setState({ "error": null, "weekEditIndex": -1 });
 	}
 
 	getAllFitnessData() {
@@ -220,8 +240,7 @@ class App extends React.Component {
 				}
 				else {
 					res.json().then((data) => {
-						this.setState({ sumForWeeks: data });
-						this.setState({ "loading": false });
+						this.setState({ sumForWeeks: data, "loading": false });
 					});
 				}
 			})
@@ -230,17 +249,23 @@ class App extends React.Component {
 			});
 	}
 
-	handleClickDelete(id) {
-		this.setState({ "loading": true });
-		const url = '/rest/fitnessWeek/' + id;
-		var indexOfDeleted = -1;
+	findWeekIndexById(id) {
+		var indexFound = -1;
 		//first check to see if the id given is even in the list of weeks
 		for (var i = 0; i < this.state.fitnessWeeks.length; i++) {
 			if (this.state.fitnessWeeks[i].id == id) {
-				indexOfDeleted = i;
+				indexFound = i;
 				break;
 			}
 		}
+
+		return indexFound;
+	}
+
+	handleClickDelete(id) {
+		this.setState({ "loading": true });
+		const url = '/rest/fitnessWeek/' + id;
+		const indexOfDeleted = this.findWeekIndexById(id);
 
 		//if the id given is not found then go to error page
 		if (indexOfDeleted == -1) {
@@ -346,15 +371,24 @@ class App extends React.Component {
 				}
 				else {
 					res.json().then((data) => {
-						this.setState({ fitnessWeekSums: data });
-						this.setState({ "loading": false });
-						this.setState({ "error": undefined });
+						this.setState({ fitnessWeekSums: data, "loading": false });
 					});
 				}
 			})
 			.catch((error) => {
 				this.handleError(error);
 			});
+	}
+
+	handleClickEdit(id) {
+		const indexOfWeek = this.findWeekIndexById(id);
+		if (indexOfWeek == -1) {
+			this.setState({ "error": "Could not find week to be edited with key: " + id });
+			return;
+		}
+		else {
+			this.setState({ "weekEditIndex": indexOfWeek });
+		}
 	}
 
 	handleError(error) {
