@@ -1,3 +1,7 @@
 div.spacedContainer {
 	margin-top: 2rem;
 }
+
+li.is-active {
+	font-weight: bold;
+}
