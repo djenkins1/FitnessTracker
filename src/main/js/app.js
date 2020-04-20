@@ -6,7 +6,8 @@ import {
 	BrowserRouter as Router,
 	Switch,
 	Route,
-	NavLink
+	NavLink,
+	Redirect
 } from "react-router-dom";
 
 import FitnessWeekTable from './FitnessWeekTable';
@@ -82,7 +83,7 @@ class App extends React.Component {
 					</Navbar.Brand>
 					<Navbar.Menu className="is-active">
 						<Navbar.Container>
-							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/" >Home</NavLink>
+							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/index" >Home</NavLink>
 							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/graph" >Daily Graph</NavLink>
 							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/sums">Monthly Graph</NavLink>
 							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/sumsAnnual" >Annual Report</NavLink>
@@ -120,11 +121,18 @@ class App extends React.Component {
 					<Route path="/error">
 						<ErrorPage error={this.state.error} />
 					</Route>
-					<Route path="/">
+					<Route path="/500">
+						<ErrorPage error="An unexpected error has occurred." />
+					</Route>
+					<Route path="/404">
+						<ErrorPage error="Page not found." />
+					</Route>
+					<Route path="/index">
 						<ErrorHandlerRedirect error={this.state.error} >
 							<FitnessWeekTable title="All Weeks" weeks={this.state.fitnessWeeks} handleClickDelete={this.handleClickDelete} handleClickEdit={this.handleClickEdit} />
 						</ErrorHandlerRedirect>
 					</Route>
+					<Redirect to="/404" />
 				</Switch>
 			</Router>
 		);
