@@ -58,12 +58,15 @@ class App extends React.Component {
 		this.handleClickDelete = this.handleClickDelete.bind(this);
 		this.findWeekIndexById = this.findWeekIndexById.bind(this);
 		this.handleClickEdit = this.handleClickEdit.bind(this);
-
 	}
 
 	componentDidMount() {
 		this.setState({ "loading": true });
 		this.getAllFitnessData();
+	}
+
+	componentDidCatch(error, info) {
+		this.handleError(error);
 	}
 
 	render() {
