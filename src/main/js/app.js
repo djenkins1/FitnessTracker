@@ -1,12 +1,10 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
-import { Navbar } from "react-bulma-components";
 import Moment from 'moment';
 import {
 	BrowserRouter as Router,
 	Switch,
 	Route,
-	NavLink,
 	Redirect
 } from "react-router-dom";
 
@@ -17,6 +15,7 @@ import FitnessWeekDateFilter from "./FitnessWeekDateFilter";
 import FitnessWeekSumReport from "./FitnessWeekSumReport";
 import ErrorHandlerRedirect from "./ErrorHandlerRedirect";
 import ErrorPage from "./ErrorPage";
+import TopNavigation from "./TopNavigation";
 
 
 class App extends React.Component {
@@ -76,21 +75,7 @@ class App extends React.Component {
 		const weekFromEditIndex = (this.state.weekEditIndex >= 0 ? this.state.fitnessWeeks[this.state.weekEditIndex] : {});
 		return (
 			<Router>
-				<Navbar color="info">
-					<Navbar.Brand>
-						<Navbar.Item renderAs="span"><i className="fas fa-running"></i> Fitness Tracker</Navbar.Item>
-						<Navbar.Burger data-target="navLinksMenu" />
-					</Navbar.Brand>
-					<Navbar.Menu className="is-active">
-						<Navbar.Container>
-							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/index" >Home</NavLink>
-							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/graph" >Daily Graph</NavLink>
-							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/sums">Monthly Graph</NavLink>
-							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/sumsAnnual" >Annual Report</NavLink>
-							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/create" >Add Week</NavLink>
-						</Navbar.Container>
-					</Navbar.Menu>
-				</Navbar>
+				<TopNavigation onClick={this.clearErrorMessageState} />
 				<Switch>
 					<Route path="/graph">
 						<ErrorHandlerRedirect error={this.state.error} >
