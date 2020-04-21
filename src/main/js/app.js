@@ -217,7 +217,7 @@ class App extends React.Component {
 			});
 	}
 
-	getSumDataForDates(startDate, endDate, stateKey = "sumForWeeks") {
+	getSumDataForDates(startDate, endDate, stateKey = "sumForWeeks", ignore404 = false) {
 		this.setState({ "loading": true });
 		const url = './rest/fitnessWeeks/sum/between?startDate=' + startDate + '&endDate=' + endDate;
 		fetch(url, {
@@ -234,7 +234,14 @@ class App extends React.Component {
 			.then(res => {
 				if (!res.ok) {
 					if (res.status == 404) {
-						throw Error("Problem getting data, sum data not found for dates selected.")
+						//if ignore404 than just set data in state to empty object instead of going to error page
+						if (ignore404) {
+							console.log("Could not find sum data for dates selected, ignoring.");
+							this.setState({ [stateKey]: {}, "loading": false });
+						}
+						else {
+							throw Error("Problem getting data, sum data not found for dates selected.")
+						}
 					}
 					else {
 						throw Error("An unexpected problem occurred, response code: " + res.status);
@@ -255,7 +262,7 @@ class App extends React.Component {
 	getSumDataForLastYear(startDateThisYear, endDateThisYear) {
 		const startDateLastYear = Moment(startDateThisYear).subtract(1, 'years').format('YYYY-MM-DD');
 		const endDateLastYear = Moment(endDateThisYear).subtract(1, 'years').format('YYYY-MM-DD');
-		this.getSumDataForDates(startDateLastYear, endDateLastYear, "sumForWeeksLastYear");
+		this.getSumDataForDates(startDateLastYear, endDateLastYear, "sumForWeeksLastYear", true);
 	}
 
 	getSumDataForThisYearAndLastYear(startDateThisYear, endDateThisYear) {
