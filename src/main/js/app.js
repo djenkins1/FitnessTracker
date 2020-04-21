@@ -42,7 +42,8 @@ class App extends React.Component {
 			],
 			"sumForWeeks": {},
 			"fitnessWeekSums": [],
-			"weekEditIndex": -1
+			"weekEditIndex": -1,
+			"redirectForm": false
 		};
 
 		this.addWeek = this.addWeek.bind(this);
@@ -58,6 +59,8 @@ class App extends React.Component {
 		this.handleClickDelete = this.handleClickDelete.bind(this);
 		this.findWeekIndexById = this.findWeekIndexById.bind(this);
 		this.handleClickEdit = this.handleClickEdit.bind(this);
+		this.editWeekAjax = this.editWeekAjax.bind(this);
+		this.addWeekAjax = this.addWeekAjax.bind(this);
 	}
 
 	componentDidMount() {
@@ -86,7 +89,7 @@ class App extends React.Component {
 					</Route>
 					<Route path="/create">
 						<ErrorHandlerRedirect error={this.state.error} >
-							<FitnessWeekForm handleError={this.handleError} title="Add Week" addWeek={this.addWeek} editWeek={this.editWeek} week={weekFromEditIndex} />
+							<FitnessWeekForm redirectForm={this.state.redirectForm} title="Add Week" addWeek={this.addWeekAjax} editWeek={this.editWeekAjax} week={weekFromEditIndex} />
 						</ErrorHandlerRedirect>
 					</Route>
 					<Route path="/sumsAnnual">
@@ -180,7 +183,7 @@ class App extends React.Component {
 	}
 
 	clearErrorMessageState() {
-		this.setState({ "error": null, "weekEditIndex": -1 });
+		this.setState({ "error": null, "weekEditIndex": -1, "redirectForm": false });
 	}
 
 	getAllFitnessData() {
@@ -376,6 +379,90 @@ class App extends React.Component {
 			});
 	}
 
+	editWeekAjax(event, editWeekData) {
+		this.setState({ "loading": true });
+		const url = "./rest/fitnessWeek/update";
+		fetch(url, {
+			method: 'PUT',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'error',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify(editWeekData)
+		})
+			.then(res => {
+				if (!res.ok) {
+					if (res.status == 404) {
+						throw Error("Problem editing week, could not find form endpoint.")
+					}
+					else if (res.status == 400) {
+						//front end validation should catch anything bad in request
+						//if it does not then show an error page
+						throw Error("Validation failed for editing week.");
+					}
+					else {
+						throw Error("An unexpected problem occurred, response code: " + res.status);
+					}
+
+				}
+				else {
+					res.json().then((updatedWeek) => {
+						this.editWeek(updatedWeek);
+						this.setState({ "redirectForm": true });
+					});
+				}
+			})
+			.catch((error) => {
+				this.handleError(error);
+			});
+	}
+
+	addWeekAjax(event, newWeekData) {
+		this.setState({ "loading": true });
+		const url = "./rest/fitnessWeeks";
+		fetch(url, {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'error',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify(newWeekData)
+		})
+			.then(res => {
+				if (!res.ok) {
+					if (res.status == 404) {
+						throw Error("Problem creating week, could not find form endpoint.")
+					}
+					else if (res.status == 400) {
+						//front end validation should catch anything bad in request
+						//if it does not then show an error page
+						throw Error("Validation failed for creating week.");
+					}
+					else {
+						throw Error("An unexpected problem occurred, response code: " + res.status);
+					}
+
+				}
+				else {
+					res.json().then((createdWeek) => {
+						this.addWeek(createdWeek);
+						this.setState({ "redirectForm": true });
+					});
+				}
+			})
+			.catch((error) => {
+				this.handleError(error);
+			});
+	}
+
 	handleClickEdit(id) {
 		const indexOfWeek = this.findWeekIndexById(id);
 		if (indexOfWeek == -1) {
@@ -383,7 +470,8 @@ class App extends React.Component {
 			return;
 		}
 		else {
-			this.setState({ "weekEditIndex": indexOfWeek });
+			//make sure to set redirectForm to false or the form will redirect if just added/edited a new week
+			this.setState({ "weekEditIndex": indexOfWeek,"redirectForm": false});
 		}
 	}
 
