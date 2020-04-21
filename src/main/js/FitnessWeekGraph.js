@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { XYPlot, LineSeries, LabelSeries, XAxis, YAxis, HorizontalGridLines, VerticalGridLines } from 'react-vis';
-import { Box, Heading, Container, Notification } from 'react-bulma-components';
+import { XYPlot, LineSeries, XAxis, YAxis, HorizontalGridLines, VerticalGridLines } from 'react-vis';
+import { Container, Notification } from 'react-bulma-components';
 import FitnessWeekSumReport from './FitnessWeekSumReport';
 
 class FitnessWeekGraph extends Component {
@@ -13,7 +13,6 @@ class FitnessWeekGraph extends Component {
 			const chartDomain = [0, largestValue * 1.25];
 			//if there is only one element in the data then the graph was not displaying properly
 			//set ticks as the workaround
-			const ticksForTime = (data.length == 1 ? this.getDefaultTicksForOnePoint(data[0].x) : null);
 			return (
 				<Container>
 					<XYPlot

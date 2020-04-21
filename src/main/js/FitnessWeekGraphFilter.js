@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import FitnessWeekGraph from './FitnessWeekGraph';
-import { Tabs, Container, Box } from 'react-bulma-components';
+import { Tabs, Box } from 'react-bulma-components';
 
 class FitnessWeekGraphFilter extends Component {
 	constructor(props) {
