@@ -35,7 +35,7 @@ class FitnessWeekGraph extends Component {
 			//show a sum report if there is only one week in the data set
 			return (
 				<Container>
-					<FitnessWeekSumReport title={this.props.weeks[0].dateRecorded} sumData={this.props.weeks[0]} />
+					<FitnessWeekSumReport title="" sumData={this.props.weeks[0]} />
 				</Container>
 			);
 		}
