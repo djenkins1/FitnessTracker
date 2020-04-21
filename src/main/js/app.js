@@ -43,7 +43,8 @@ class App extends React.Component {
 			"sumForWeeks": {},
 			"fitnessWeekSums": [],
 			"weekEditIndex": -1,
-			"redirectForm": false
+			"redirectForm": false,
+			"sumForWeeksLastYear": {}
 		};
 
 		this.addWeek = this.addWeek.bind(this);
@@ -61,6 +62,8 @@ class App extends React.Component {
 		this.handleClickEdit = this.handleClickEdit.bind(this);
 		this.editWeekAjax = this.editWeekAjax.bind(this);
 		this.addWeekAjax = this.addWeekAjax.bind(this);
+		this.getSumDataForLastYear = this.getSumDataForLastYear.bind(this);
+		this.getSumDataForThisYearAndLastYear = this.getSumDataForThisYearAndLastYear.bind(this);
 	}
 
 	componentDidMount() {
@@ -94,8 +97,8 @@ class App extends React.Component {
 					</Route>
 					<Route path="/sumsAnnual">
 						<ErrorHandlerRedirect error={this.state.error} >
-							<FitnessWeekSumReport error={this.state.error} title="Annual Report" sumData={this.state.sumForWeeks}>
-								<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumDataForDates} />
+							<FitnessWeekSumReport error={this.state.error} title="Annual Report" sumData={this.state.sumForWeeks} sumDataLastYear={this.state.sumForWeeksLastYear}>
+								<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumDataForThisYearAndLastYear} />
 							</FitnessWeekSumReport>
 						</ErrorHandlerRedirect>
 					</Route>
@@ -204,6 +207,7 @@ class App extends React.Component {
 						this.setState({ fitnessWeeks: data });
 						this.sortWeeks();
 						this.getSumDataForDates(defaultDates.startDate, defaultDates.endDate);
+						this.getSumDataForLastYear(defaultDates.startDate, defaultDates.endDate);
 						this.getSumsByMonths(defaultDates.startDate, defaultDates.endDate);
 					});
 				}
@@ -213,7 +217,7 @@ class App extends React.Component {
 			});
 	}
 
-	getSumDataForDates(startDate, endDate) {
+	getSumDataForDates(startDate, endDate, stateKey = "sumForWeeks") {
 		this.setState({ "loading": true });
 		const url = './rest/fitnessWeeks/sum/between?startDate=' + startDate + '&endDate=' + endDate;
 		fetch(url, {
@@ -239,13 +243,24 @@ class App extends React.Component {
 				}
 				else {
 					res.json().then((data) => {
-						this.setState({ sumForWeeks: data, "loading": false });
+						this.setState({ [stateKey]: data, "loading": false });
 					});
 				}
 			})
 			.catch((error) => {
 				this.handleError(error);
 			});
+	}
+
+	getSumDataForLastYear(startDateThisYear, endDateThisYear) {
+		const startDateLastYear = Moment(startDateThisYear).subtract(1, 'years').format('YYYY-MM-DD');
+		const endDateLastYear = Moment(endDateThisYear).subtract(1, 'years').format('YYYY-MM-DD');
+		this.getSumDataForDates(startDateLastYear, endDateLastYear, "sumForWeeksLastYear");
+	}
+
+	getSumDataForThisYearAndLastYear(startDateThisYear, endDateThisYear) {
+		this.getSumDataForDates(startDateThisYear, endDateThisYear);
+		this.getSumDataForLastYear(startDateThisYear, endDateThisYear);
 	}
 
 	findWeekIndexById(id) {
@@ -471,7 +486,7 @@ class App extends React.Component {
 		}
 		else {
 			//make sure to set redirectForm to false or the form will redirect if just added/edited a new week
-			this.setState({ "weekEditIndex": indexOfWeek,"redirectForm": false});
+			this.setState({ "weekEditIndex": indexOfWeek, "redirectForm": false });
 		}
 	}
 

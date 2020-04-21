@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Box, Notification, Heading, Table } from 'react-bulma-components';
+import FitnessWeekCompareSumReport from './FitnessWeekCompareSumReport';
 
 class FitnessWeekSumReport extends Component {
 	render() {
@@ -14,14 +15,20 @@ class FitnessWeekSumReport extends Component {
 								<tr>
 									<td><b>Total Time</b></td>
 									<td>{timeInDaysHoursMinutes}</td>
+									<FitnessWeekCompareSumReport thisYearValue={this.props.sumData.totalTime}
+										lastYearValue={this.props.sumDataLastYear.totalTime} />
 								</tr>
 								<tr>
 									<td><b>Total Calories</b></td>
 									<td>{this.props.sumData.totalCalories.toLocaleString()} Calories</td>
+									<FitnessWeekCompareSumReport thisYearValue={this.props.sumData.totalCalories}
+										lastYearValue={this.props.sumDataLastYear.totalCalories} />
 								</tr>
 								<tr>
 									<td><b>Total Miles</b></td>
 									<td>{this.props.sumData.totalMiles.toLocaleString()} Miles</td>
+									<FitnessWeekCompareSumReport thisYearValue={this.props.sumData.totalMiles}
+										lastYearValue={this.props.sumDataLastYear.totalMiles} />
 								</tr>
 							</tbody>
 						</Table>
