@@ -16,7 +16,7 @@ class FitnessWeekGraph extends Component {
 			return (
 				<Container>
 					<XYPlot
-						margin={{ left: 100, bottom: 100 }}
+						margin={{ left: 50, bottom: 100 }}
 						xType="time"
 						width={this.props.chartWidth}
 						height={this.props.chartHeight}
