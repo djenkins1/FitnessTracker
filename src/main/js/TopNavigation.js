@@ -9,6 +9,7 @@ class TopNavigation extends React.Component {
 			"isHamburgerActive": false
 		};
 		this.handleHamburgerClick = this.handleHamburgerClick.bind(this);
+		this.handleLinkClick = this.handleLinkClick.bind(this);
 	}
 
 	render() {
@@ -21,11 +22,11 @@ class TopNavigation extends React.Component {
 				</Navbar.Brand>
 				<Navbar.Menu className={this.state.isHamburgerActive ? "is-active" : ""}>
 					<Navbar.Container>
-						<NavLink exact activeClassName="is-active" onClick={this.props.onClick} className="is-tab navbar-item" to="/index" >Home</NavLink>
-						<NavLink exact activeClassName="is-active" onClick={this.props.onClick} className="is-tab navbar-item" to="/graph" >Daily Graph</NavLink>
-						<NavLink exact activeClassName="is-active" onClick={this.props.onClick} className="is-tab navbar-item" to="/sums">Monthly Graph</NavLink>
-						<NavLink exact activeClassName="is-active" onClick={this.props.onClick} className="is-tab navbar-item" to="/sumsAnnual" >Annual Report</NavLink>
-						<NavLink exact activeClassName="is-active" onClick={this.props.onClick} className="is-tab navbar-item" to="/create" >Add Week</NavLink>
+						<NavLink exact activeClassName="is-active" onClick={this.handleLinkClick} className="is-tab navbar-item" to="/index" >Home</NavLink>
+						<NavLink exact activeClassName="is-active" onClick={this.handleLinkClick} className="is-tab navbar-item" to="/graph" >Daily Graph</NavLink>
+						<NavLink exact activeClassName="is-active" onClick={this.handleLinkClick} className="is-tab navbar-item" to="/sums">Monthly Graph</NavLink>
+						<NavLink exact activeClassName="is-active" onClick={this.handleLinkClick} className="is-tab navbar-item" to="/sumsAnnual" >Annual Report</NavLink>
+						<NavLink exact activeClassName="is-active" onClick={this.handleLinkClick} className="is-tab navbar-item" to="/create" >Add Week</NavLink>
 					</Navbar.Container>
 				</Navbar.Menu>
 			</Navbar>
@@ -35,6 +36,11 @@ class TopNavigation extends React.Component {
 	handleHamburgerClick(event) {
 		event.preventDefault();
 		this.setState({ "isHamburgerActive": !this.state.isHamburgerActive });
+	}
+
+	handleLinkClick(event) {
+		this.setState({ "isHamburgerActive": false });
+		this.props.onClick(event);
 	}
 
 }
