@@ -34,7 +34,7 @@ class FitnessWeekForm extends Component {
 	}
 
 	render() {
-		if (this.state.redirect) {
+		if (this.state.redirect || this.props.redirectForm) {
 			return (
 				<Redirect to="/index" />
 			);
@@ -359,88 +359,14 @@ class FitnessWeekForm extends Component {
 
 	editWeek(event, formData) {
 		this.setState({ "loading": true });
-		const url = "./rest/fitnessWeek/update";
 		const editWeekData = this.convertStateToFormData(formData);
-		fetch(url, {
-			method: 'PUT',
-			mode: 'cors',
-			cache: 'no-cache',
-			credentials: 'same-origin',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			redirect: 'error',
-			referrerPolicy: 'no-referrer',
-			body: JSON.stringify(editWeekData)
-		})
-			.then(res => {
-				if (!res.ok) {
-					if (res.status == 404) {
-						throw Error("Problem editing week, could not find form endpoint.")
-					}
-					else if (res.status == 400) {
-						//front end validation should catch anything bad in request
-						//if it does not then show an error page
-						throw Error("Validation failed for editing week.");
-					}
-					else {
-						throw Error("An unexpected problem occurred, response code: " + res.status);
-					}
-
-				}
-				else {
-					res.json().then((updatedWeek) => {
-						this.props.editWeek(updatedWeek);
-						this.setState({ "redirect": true });
-					});
-				}
-			})
-			.catch((error) => {
-				this.props.handleError(error);
-			});
+		this.props.editWeek(event, editWeekData);
 	}
 
 	createWeek(event, formData) {
 		this.setState({ "loading": true });
-		const url = "./rest/fitnessWeeks";
 		const newWeekData = this.convertStateToFormData(formData);
-		fetch(url, {
-			method: 'POST',
-			mode: 'cors',
-			cache: 'no-cache',
-			credentials: 'same-origin',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			redirect: 'error',
-			referrerPolicy: 'no-referrer',
-			body: JSON.stringify(newWeekData)
-		})
-			.then(res => {
-				if (!res.ok) {
-					if (res.status == 404) {
-						throw Error("Problem creating week, could not find form endpoint.")
-					}
-					else if (res.status == 400) {
-						//front end validation should catch anything bad in request
-						//if it does not then show an error page
-						throw Error("Validation failed for creating week.");
-					}
-					else {
-						throw Error("An unexpected problem occurred, response code: " + res.status);
-					}
-
-				}
-				else {
-					res.json().then((createdWeek) => {
-						this.props.addWeek(createdWeek);
-						this.setState({ "redirect": true });
-					});
-				}
-			})
-			.catch((error) => {
-				this.props.handleError(error);
-			});
+		this.props.addWeek(event, newWeekData);
 	}
 
 	handleCancelClick(event) {

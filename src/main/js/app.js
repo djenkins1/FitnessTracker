@@ -1,12 +1,10 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
-import { Navbar } from "react-bulma-components";
 import Moment from 'moment';
 import {
 	BrowserRouter as Router,
 	Switch,
 	Route,
-	NavLink,
 	Redirect
 } from "react-router-dom";
 
@@ -17,6 +15,7 @@ import FitnessWeekDateFilter from "./FitnessWeekDateFilter";
 import FitnessWeekSumReport from "./FitnessWeekSumReport";
 import ErrorHandlerRedirect from "./ErrorHandlerRedirect";
 import ErrorPage from "./ErrorPage";
+import TopNavigation from "./TopNavigation";
 
 
 class App extends React.Component {
@@ -43,7 +42,9 @@ class App extends React.Component {
 			],
 			"sumForWeeks": {},
 			"fitnessWeekSums": [],
-			"weekEditIndex": -1
+			"weekEditIndex": -1,
+			"redirectForm": false,
+			"sumForWeeksLastYear": {}
 		};
 
 		this.addWeek = this.addWeek.bind(this);
@@ -59,6 +60,10 @@ class App extends React.Component {
 		this.handleClickDelete = this.handleClickDelete.bind(this);
 		this.findWeekIndexById = this.findWeekIndexById.bind(this);
 		this.handleClickEdit = this.handleClickEdit.bind(this);
+		this.editWeekAjax = this.editWeekAjax.bind(this);
+		this.addWeekAjax = this.addWeekAjax.bind(this);
+		this.getSumDataForLastYear = this.getSumDataForLastYear.bind(this);
+		this.getSumDataForThisYearAndLastYear = this.getSumDataForThisYearAndLastYear.bind(this);
 	}
 
 	componentDidMount() {
@@ -76,21 +81,7 @@ class App extends React.Component {
 		const weekFromEditIndex = (this.state.weekEditIndex >= 0 ? this.state.fitnessWeeks[this.state.weekEditIndex] : {});
 		return (
 			<Router>
-				<Navbar color="info">
-					<Navbar.Brand>
-						<Navbar.Item renderAs="span"><i className="fas fa-running"></i> Fitness Tracker</Navbar.Item>
-						<Navbar.Burger data-target="navLinksMenu" />
-					</Navbar.Brand>
-					<Navbar.Menu className="is-active">
-						<Navbar.Container>
-							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/index" >Home</NavLink>
-							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/graph" >Daily Graph</NavLink>
-							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/sums">Monthly Graph</NavLink>
-							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/sumsAnnual" >Annual Report</NavLink>
-							<NavLink exact activeClassName="is-active" onClick={this.clearErrorMessageState} className="is-tab navbar-item" to="/create" >Add Week</NavLink>
-						</Navbar.Container>
-					</Navbar.Menu>
-				</Navbar>
+				<TopNavigation onClick={this.clearErrorMessageState} />
 				<Switch>
 					<Route path="/graph">
 						<ErrorHandlerRedirect error={this.state.error} >
@@ -101,13 +92,13 @@ class App extends React.Component {
 					</Route>
 					<Route path="/create">
 						<ErrorHandlerRedirect error={this.state.error} >
-							<FitnessWeekForm handleError={this.handleError} title="Add Week" addWeek={this.addWeek} editWeek={this.editWeek} week={weekFromEditIndex} />
+							<FitnessWeekForm redirectForm={this.state.redirectForm} title="Add Week" addWeek={this.addWeekAjax} editWeek={this.editWeekAjax} week={weekFromEditIndex} />
 						</ErrorHandlerRedirect>
 					</Route>
 					<Route path="/sumsAnnual">
 						<ErrorHandlerRedirect error={this.state.error} >
-							<FitnessWeekSumReport error={this.state.error} title="Annual Report" sumData={this.state.sumForWeeks}>
-								<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumDataForDates} />
+							<FitnessWeekSumReport error={this.state.error} title="Annual Report" sumData={this.state.sumForWeeks} sumDataLastYear={this.state.sumForWeeksLastYear}>
+								<FitnessWeekDateFilter {...defaultDatesForSum} onFilterDates={this.getSumDataForThisYearAndLastYear} />
 							</FitnessWeekSumReport>
 						</ErrorHandlerRedirect>
 					</Route>
@@ -195,7 +186,7 @@ class App extends React.Component {
 	}
 
 	clearErrorMessageState() {
-		this.setState({ "error": null, "weekEditIndex": -1 });
+		this.setState({ "error": null, "weekEditIndex": -1, "redirectForm": false });
 	}
 
 	getAllFitnessData() {
@@ -216,6 +207,7 @@ class App extends React.Component {
 						this.setState({ fitnessWeeks: data });
 						this.sortWeeks();
 						this.getSumDataForDates(defaultDates.startDate, defaultDates.endDate);
+						this.getSumDataForLastYear(defaultDates.startDate, defaultDates.endDate);
 						this.getSumsByMonths(defaultDates.startDate, defaultDates.endDate);
 					});
 				}
@@ -225,7 +217,7 @@ class App extends React.Component {
 			});
 	}
 
-	getSumDataForDates(startDate, endDate) {
+	getSumDataForDates(startDate, endDate, stateKey = "sumForWeeks", ignore404 = false) {
 		this.setState({ "loading": true });
 		const url = './rest/fitnessWeeks/sum/between?startDate=' + startDate + '&endDate=' + endDate;
 		fetch(url, {
@@ -242,7 +234,14 @@ class App extends React.Component {
 			.then(res => {
 				if (!res.ok) {
 					if (res.status == 404) {
-						throw Error("Problem getting data, sum data not found for dates selected.")
+						//if ignore404 than just set data in state to empty object instead of going to error page
+						if (ignore404) {
+							console.log("Could not find sum data for dates selected, ignoring.");
+							this.setState({ [stateKey]: {}, "loading": false });
+						}
+						else {
+							throw Error("Problem getting data, sum data not found for dates selected.")
+						}
 					}
 					else {
 						throw Error("An unexpected problem occurred, response code: " + res.status);
@@ -251,13 +250,24 @@ class App extends React.Component {
 				}
 				else {
 					res.json().then((data) => {
-						this.setState({ sumForWeeks: data, "loading": false });
+						this.setState({ [stateKey]: data, "loading": false });
 					});
 				}
 			})
 			.catch((error) => {
 				this.handleError(error);
 			});
+	}
+
+	getSumDataForLastYear(startDateThisYear, endDateThisYear) {
+		const startDateLastYear = Moment(startDateThisYear).subtract(1, 'years').format('YYYY-MM-DD');
+		const endDateLastYear = Moment(endDateThisYear).subtract(1, 'years').format('YYYY-MM-DD');
+		this.getSumDataForDates(startDateLastYear, endDateLastYear, "sumForWeeksLastYear", true);
+	}
+
+	getSumDataForThisYearAndLastYear(startDateThisYear, endDateThisYear) {
+		this.getSumDataForDates(startDateThisYear, endDateThisYear);
+		this.getSumDataForLastYear(startDateThisYear, endDateThisYear);
 	}
 
 	findWeekIndexById(id) {
@@ -391,6 +401,90 @@ class App extends React.Component {
 			});
 	}
 
+	editWeekAjax(event, editWeekData) {
+		this.setState({ "loading": true });
+		const url = "./rest/fitnessWeek/update";
+		fetch(url, {
+			method: 'PUT',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'error',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify(editWeekData)
+		})
+			.then(res => {
+				if (!res.ok) {
+					if (res.status == 404) {
+						throw Error("Problem editing week, could not find form endpoint.")
+					}
+					else if (res.status == 400) {
+						//front end validation should catch anything bad in request
+						//if it does not then show an error page
+						throw Error("Validation failed for editing week.");
+					}
+					else {
+						throw Error("An unexpected problem occurred, response code: " + res.status);
+					}
+
+				}
+				else {
+					res.json().then((updatedWeek) => {
+						this.editWeek(updatedWeek);
+						this.setState({ "redirectForm": true });
+					});
+				}
+			})
+			.catch((error) => {
+				this.handleError(error);
+			});
+	}
+
+	addWeekAjax(event, newWeekData) {
+		this.setState({ "loading": true });
+		const url = "./rest/fitnessWeeks";
+		fetch(url, {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'error',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify(newWeekData)
+		})
+			.then(res => {
+				if (!res.ok) {
+					if (res.status == 404) {
+						throw Error("Problem creating week, could not find form endpoint.")
+					}
+					else if (res.status == 400) {
+						//front end validation should catch anything bad in request
+						//if it does not then show an error page
+						throw Error("Validation failed for creating week.");
+					}
+					else {
+						throw Error("An unexpected problem occurred, response code: " + res.status);
+					}
+
+				}
+				else {
+					res.json().then((createdWeek) => {
+						this.addWeek(createdWeek);
+						this.setState({ "redirectForm": true });
+					});
+				}
+			})
+			.catch((error) => {
+				this.handleError(error);
+			});
+	}
+
 	handleClickEdit(id) {
 		const indexOfWeek = this.findWeekIndexById(id);
 		if (indexOfWeek == -1) {
@@ -398,7 +492,8 @@ class App extends React.Component {
 			return;
 		}
 		else {
-			this.setState({ "weekEditIndex": indexOfWeek });
+			//make sure to set redirectForm to false or the form will redirect if just added/edited a new week
+			this.setState({ "weekEditIndex": indexOfWeek, "redirectForm": false });
 		}
 	}
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Box, Message, Container } from 'react-bulma-components';
+import { Message, Container } from 'react-bulma-components';
 
 class ErrorPage extends Component {
 	render() {
