@@ -2,7 +2,21 @@ plugins {
 	id 'org.springframework.boot' version '2.2.6.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+	id("com.github.node-gradle.node") version "2.2.0"
 }
+
+node {
+    version = "12.16.1"
+    download = true
+    distBaseUrl = "https://nodejs.org/dist"
+}
+
+task bundle(type: NpmTask, dependsOn: npmInstall) {
+    args = ['run', 'build']
+}
+ 
+assemble.dependsOn(bundle)
+processResources.dependsOn(bundle)
 
 group = 'com.djenkins'
 version = '0.0.1-SNAPSHOT'
@@ -17,8 +31,16 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.postgresql:postgresql'
+	implementation 'io.springfox:springfox-swagger2:2.9.2'
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 test {
 	useJUnitPlatform()
+	filter {
+		includeTestsMatching "com.djenkins.fitness.*";
+	}
 }
