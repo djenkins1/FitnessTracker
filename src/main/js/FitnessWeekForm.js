@@ -48,7 +48,7 @@ class FitnessWeekForm extends Component {
 						<Form.Label htmlFor="totalTime">Total Time(Minutes)</Form.Label>
 					</Form.Field>
 					<Form.Field kind="addons">
-						<Form.Control>
+						<Form.Control fullwidth={true}>
 							<Form.Input type="number" name="totalTime" min="0" placeholder="120" value={this.state.totalTime} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
@@ -59,7 +59,7 @@ class FitnessWeekForm extends Component {
 						<Form.Label htmlFor="totalMiles">Total Miles</Form.Label>
 					</Form.Field>
 					<Form.Field kind="addons">
-						<Form.Control>
+						<Form.Control fullwidth={true}>
 							<Form.Input type="number" step="0.1" min="0" name="totalMiles" placeholder="20.5" value={this.state.totalMiles} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
@@ -70,7 +70,7 @@ class FitnessWeekForm extends Component {
 						<Form.Label htmlFor="totalCalories">Total Calories</Form.Label>
 					</Form.Field>
 					<Form.Field kind="addons">
-						<Form.Control>
+						<Form.Control fullwidth={true}>
 							<Form.Input type="number" step="0.1" min="0" name="totalCalories" placeholder="250.25" value={this.state.totalCalories} onChange={this.handleInputChange} />
 						</Form.Control>
 						<Button outlined={true} tabIndex="-1" color="info" onClick={this.handleCalorieAddClick}>+999.9</Button>
@@ -82,7 +82,7 @@ class FitnessWeekForm extends Component {
 						<Form.Label htmlFor="milesToDate">Miles to Date</Form.Label>
 					</Form.Field>
 					<Form.Field kind="addons">
-						<Form.Control>
+						<Form.Control fullwidth={true}>
 							<Form.Input type="number" min="0" name="milesToDate" placeholder="1250" value={this.state.milesToDate} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
@@ -92,13 +92,13 @@ class FitnessWeekForm extends Component {
 					<Form.Field>
 						<Form.Label>Days Exercised</Form.Label>
 						<Form.Control>
-							<Form.Checkbox tabIndex="-1" name="monday" checked={this.state.daysExercised.monday} onChange={this.handleInputChange}>M</Form.Checkbox>
-							<Form.Checkbox tabIndex="-1" name="tuesday" checked={this.state.daysExercised.tuesday} onChange={this.handleInputChange}>T</Form.Checkbox>
-							<Form.Checkbox tabIndex="-1" name="wednesday" checked={this.state.daysExercised.wednesday} onChange={this.handleInputChange}>W</Form.Checkbox>
-							<Form.Checkbox tabIndex="-1" name="thursday" checked={this.state.daysExercised.thursday} onChange={this.handleInputChange}>T</Form.Checkbox>
-							<Form.Checkbox tabIndex="-1" name="friday" checked={this.state.daysExercised.friday} onChange={this.handleInputChange}>F</Form.Checkbox>
-							<Form.Checkbox tabIndex="-1" name="saturday" checked={this.state.daysExercised.saturday} onChange={this.handleInputChange}>S</Form.Checkbox>
-							<Form.Checkbox tabIndex="-1" name="sunday" checked={this.state.daysExercised.sunday} onChange={this.handleInputChange}>S</Form.Checkbox>
+							<Form.Checkbox className="spaced-checkbox" tabIndex="-1" name="monday" checked={this.state.daysExercised.monday} onChange={this.handleInputChange}>M</Form.Checkbox>
+							<Form.Checkbox className="spaced-checkbox" tabIndex="-1" name="tuesday" checked={this.state.daysExercised.tuesday} onChange={this.handleInputChange}>T</Form.Checkbox>
+							<Form.Checkbox className="spaced-checkbox" tabIndex="-1" name="wednesday" checked={this.state.daysExercised.wednesday} onChange={this.handleInputChange}>W</Form.Checkbox>
+							<Form.Checkbox className="spaced-checkbox" tabIndex="-1" name="thursday" checked={this.state.daysExercised.thursday} onChange={this.handleInputChange}>T</Form.Checkbox>
+							<Form.Checkbox className="spaced-checkbox" tabIndex="-1" name="friday" checked={this.state.daysExercised.friday} onChange={this.handleInputChange}>F</Form.Checkbox>
+							<Form.Checkbox className="spaced-checkbox" tabIndex="-1" name="saturday" checked={this.state.daysExercised.saturday} onChange={this.handleInputChange}>S</Form.Checkbox>
+							<Form.Checkbox className="spaced-checkbox" tabIndex="-1" name="sunday" checked={this.state.daysExercised.sunday} onChange={this.handleInputChange}>S</Form.Checkbox>
 						</Form.Control>
 						<FieldValidHelper errors={this.state.formErrors["daysExercised"]} />
 					</Form.Field>
@@ -106,7 +106,7 @@ class FitnessWeekForm extends Component {
 						<Form.Label htmlFor="exerciseType">Exercise Type</Form.Label>
 					</Form.Field>
 					<Form.Field kind="addons">
-						<Form.Control>
+						<Form.Control fullwidth={true}>
 							<Form.Input type="text" name="exerciseType" placeholder="Cycling" value={this.state.exerciseType} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
@@ -117,7 +117,7 @@ class FitnessWeekForm extends Component {
 						<Form.Label htmlFor="dateRecorded">Date Recorded</Form.Label>
 					</Form.Field>
 					<Form.Field kind="addons">
-						<Form.Control>
+						<Form.Control fullwidth={true}>
 							<Form.Input type="date" name="dateRecorded" placeholder="2019-12-25" value={this.state.dateRecorded} onChange={this.handleInputChange} />
 						</Form.Control>
 					</Form.Field>
