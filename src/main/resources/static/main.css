@@ -15,5 +15,9 @@ input[type="email"] {
 }
 
 .spaced-checkbox{
-	margin-right: 0.5rem; /* Give some spacing between each checkbox on add week form
+	margin-right: 0.5rem; /* Give some spacing between each checkbox on add week form */
+}
+
+td.date-no-wrap{
+	white-space: nowrap;
 }

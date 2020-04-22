@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Box, Heading, Form, Button } from 'react-bulma-components';
+import { Container, Heading, Form, Button } from 'react-bulma-components';
 import { Redirect } from 'react-router-dom';
 import FieldValidHelper from './FieldValidHelper';
 import Moment from 'moment';
@@ -41,7 +41,7 @@ class FitnessWeekForm extends Component {
 		}
 
 		return (
-			<Box>
+			<Container>
 				<Heading>{this.props.title}</Heading>
 				<form onSubmit={this.handleSubmit} noValidate={true}>
 					<Form.Field>
@@ -133,7 +133,7 @@ class FitnessWeekForm extends Component {
 						</Form.Control>
 					</Form.Field>
 				</form>
-			</Box>
+			</Container>
 		);
 	}
 

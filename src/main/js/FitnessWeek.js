@@ -5,7 +5,7 @@ class FitnessWeek extends React.Component {
 		const id = this.props.week.id;
 		return (
 			<tr>
-				<td>{this.props.week.dateRecorded}</td>
+				<td className="date-no-wrap">{this.props.week.dateRecorded}</td>
 				<td>{this.props.week.totalMiles}</td>
 				<td>{this.props.week.totalCalories}</td>
 				<td>{this.props.week.totalTime}</td>

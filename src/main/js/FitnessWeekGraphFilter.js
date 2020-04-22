@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import FitnessWeekGraph from './FitnessWeekGraph';
-import { Tabs, Box } from 'react-bulma-components';
+import { Tabs, Container } from 'react-bulma-components';
 
 class FitnessWeekGraphFilter extends Component {
 	constructor(props) {
@@ -10,13 +10,13 @@ class FitnessWeekGraphFilter extends Component {
 	render() {
 		const tabs = this.convertAttrsToTabs(this.props.showAttrs);
 		return (
-			<Box>
+			<Container>
 				<Tabs>
 					{tabs}
 				</Tabs>
 				<FitnessWeekGraph chartWidth={700} chartHeight={350} title={this.state.title} showByX={this.props.showByX} showByY={this.state.showBy} weeks={this.props.weeks} />
 				{this.props.children}
-			</Box>
+			</Container>
 		);
 	}
 	convertAttrsToTabs(attrs) {
