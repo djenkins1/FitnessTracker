@@ -21,7 +21,7 @@ class FitnessWeekTable extends React.Component {
 	render() {
 		if (this.state.redirectToEdit) {
 			return (
-				<Redirect to="/create" />
+				<Redirect to="/edit" />
 			);
 		}
 

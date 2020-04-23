@@ -29,8 +29,7 @@ class FitnessWeekForm extends Component {
 		this.validateForm = this.validateForm.bind(this);
 		this.validateField = this.validateField.bind(this);
 		this.validateFieldAndChangeState = this.validateFieldAndChangeState.bind(this);
-		this.createWeek = this.createWeek.bind(this);
-		this.editWeek = this.editWeek.bind(this);
+		this.submitWeek = this.submitWeek.bind(this);
 	}
 
 	render() {
@@ -318,14 +317,7 @@ class FitnessWeekForm extends Component {
 	handleSubmit(event) {
 		event.preventDefault();
 		if (this.validateForm()) {
-			//if week and week id are defined then this user is editing not creating
-			if (this.props.week && this.props.week.id) {
-				this.editWeek(event, this.state);
-			}
-			else {
-				this.createWeek(event, this.state);
-			}
-
+			this.submitWeek(event, this.state);
 		}
 		else {
 			console.log("validateForm() returned false");
@@ -356,13 +348,7 @@ class FitnessWeekForm extends Component {
 		return toReturn;
 	}
 
-	editWeek(event, formData) {
-		this.setState({ "loading": true });
-		const editWeekData = this.convertStateToFormData(formData);
-		this.props.editWeek(event, editWeekData);
-	}
-
-	createWeek(event, formData) {
+	submitWeek(event, formData) {
 		this.setState({ "loading": true });
 		const newWeekData = this.convertStateToFormData(formData);
 		this.props.addWeek(event, newWeekData);
@@ -374,7 +360,6 @@ class FitnessWeekForm extends Component {
 	}
 
 	getDaysExercisedFromWeek(week) {
-
 		const daysExercised = {
 			"monday": false,
 			"tuesday": false,

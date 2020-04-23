@@ -95,7 +95,12 @@ class App extends React.Component {
 					</Route>
 					<Route path="/create">
 						<ErrorHandlerRedirect error={this.state.error} >
-							<FitnessWeekForm redirectForm={this.state.redirectForm} title="Add Week" addWeek={this.addWeekAjax} editWeek={this.editWeekAjax} week={weekFromEditIndex} />
+							<FitnessWeekForm key="addWeek" redirectForm={this.state.redirectForm} title="Add Week" addWeek={this.addWeekAjax} week={{}} />
+						</ErrorHandlerRedirect>
+					</Route>
+					<Route path="/edit">
+						<ErrorHandlerRedirect error={this.state.error} >
+							<FitnessWeekForm key="editWeek" redirectForm={this.state.redirectForm} title="Edit Week" addWeek={this.editWeekAjax} week={weekFromEditIndex} />
 						</ErrorHandlerRedirect>
 					</Route>
 					<Route path="/sumsAnnual">
