@@ -21,3 +21,16 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# Built js files from react webpack
+src/main/resources/static/built/bundle.js
+src/main/resources/static/built/bundle.js.map
+build/
+bin/
+node_modules/
+package-lock.json
+.DS_Store
+.gradle/
+.project
+.settings/
+

@@ -1,0 +1,40 @@
+div.spacedContainer {
+	margin-top: 1rem;
+}
+
+li.is-active {
+	font-weight: bold;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+input[type="email"] {
+	min-height: 2rem;
+	width: 100%;
+}
+
+.spaced-checkbox {
+	margin-right: 0.5rem;
+	/* Give some spacing between each checkbox on add week form */
+}
+
+.paddedHorizontal,
+.padded {
+	padding-left: 1rem;
+	padding-right: 1rem;
+}
+
+.paddedBottom,
+.padded {
+	padding-bottom: 1rem;
+}
+
+.paddedTop,
+.padded {
+	padding-top: 1rem;
+}
+
+td.date-no-wrap {
+	white-space: nowrap;
+}
