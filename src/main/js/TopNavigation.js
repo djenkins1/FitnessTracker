@@ -16,7 +16,12 @@ class TopNavigation extends React.Component {
 		return (
 			<Navbar color="info" fixed="top">
 				<Navbar.Brand>
-					<Navbar.Item renderAs="span"><i className="fas fa-running"></i> Fitness Tracker</Navbar.Item>
+					<Navbar.Item renderAs="span">
+						<span className="icon">
+							<i className="fas fa-running"></i>
+						</span>
+						<span>Fitness Tracker</span>
+					</Navbar.Item>
 					<Navbar.Burger data-target="navLinksMenu" className={this.state.isHamburgerActive ? "is-active" : ""}
 						onClick={this.handleHamburgerClick} />
 				</Navbar.Brand>
