@@ -91,22 +91,22 @@ class FitnessWeekDateFilter extends Component {
 		const errors = this.state.errors.map((error, index) => (<Form.Help key={index} color="danger">{error}</Form.Help>));
 		return (
 			<Container className="spacedContainer">
-				<Form.Field kind="group">
-					<Form.Control>
-						<Form.Label>From </Form.Label>
-					</Form.Control>
-					<Form.Control>
-						<Form.Input type="date" name="fromDate" value={this.state.fromDate} onChange={this.handleChangeDate} />
-					</Form.Control>
-					<Form.Control>
-						<Form.Label>To </Form.Label>
-					</Form.Control>
-					<Form.Control>
-						<Form.Input type="date" name="toDate" value={this.state.toDate} onChange={this.handleChangeDate} />
-					</Form.Control>
-					<Form.Control>
-						<Button outlined={true} color="info" onClick={this.handleClickFilterButton}>Filter</Button>
-					</Form.Control>
+				<Form.Field horizontal={true} multiline={true}>
+					<Form.Field>
+						<Form.Control>
+							<Form.Input type="date" name="fromDate" value={this.state.fromDate} onChange={this.handleChangeDate} />
+						</Form.Control>
+					</Form.Field>
+					<Form.Field>
+						<Form.Control>
+							<Form.Input type="date" name="toDate" value={this.state.toDate} onChange={this.handleChangeDate} />
+						</Form.Control>
+					</Form.Field>
+					<Form.Field>
+						<Form.Control>
+							<Button outlined={true} color="info" onClick={this.handleClickFilterButton}>Filter</Button>
+						</Form.Control>
+					</Form.Field>
 				</Form.Field>
 				<Form.Field>
 					{errors}

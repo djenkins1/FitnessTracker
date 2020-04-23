@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { XYPlot, LineSeries, XAxis, YAxis, HorizontalGridLines, VerticalGridLines } from 'react-vis';
 import { Container, Notification } from 'react-bulma-components';
-import FitnessWeekSumReport from './FitnessWeekSumReport';
+import Moment from 'moment';
 
 class FitnessWeekGraph extends Component {
 	render() {
-		if (this.props.weeks && this.props.weeks.length > 1) {
+		if (this.props.weeks && this.props.weeks.length > 0) {
 			const data = this.convertWeeksToData(this.props.weeks, this.props.showByX, this.props.showByY);
 			//find the largest value and add 25 percent to it for better visibility
 			const attr = this.props.showByY;
@@ -16,7 +16,7 @@ class FitnessWeekGraph extends Component {
 			return (
 				<Container>
 					<XYPlot
-						margin={{ left: 100, bottom: 100 }}
+						margin={{ left: 50, bottom: 100 }}
 						xType="time"
 						width={this.props.chartWidth}
 						height={this.props.chartHeight}
@@ -28,14 +28,6 @@ class FitnessWeekGraph extends Component {
 						<VerticalGridLines />
 						<LineSeries data={data} />
 					</XYPlot>
-				</Container>
-			);
-		}
-		else if (this.props.weeks && this.props.weeks.length == 1) {
-			//show a sum report if there is only one week in the data set
-			return (
-				<Container>
-					<FitnessWeekSumReport title="" sumData={this.props.weeks[0]} sumDataLastYear={{}} />
 				</Container>
 			);
 		}
@@ -55,11 +47,26 @@ class FitnessWeekGraph extends Component {
 		var toReturn = [];
 		var newWeekPoint;
 
+		//add a starting point if only one week
+		if (weeks.length == 1) {
+			newWeekPoint = {};
+			newWeekPoint.x = Moment(new Date(weeks[0][xAttr])).subtract(1, "days").toDate();
+			newWeekPoint.y = 0;
+			toReturn.push(newWeekPoint);
+		}
+
 		for (var i = 0; i < weeks.length; i++) {
 			newWeekPoint = {};
 			newWeekPoint.x = new Date(weeks[i][xAttr]);
 			newWeekPoint.y = weeks[i][yAttr];
-			newWeekPoint.label = weeks[i][yAttr].toString();
+			toReturn.push(newWeekPoint);
+		}
+
+		//add an ending point if only one week
+		if (weeks.length == 1) {
+			newWeekPoint = {};
+			newWeekPoint.x = Moment(new Date(weeks[0][xAttr])).add(1, "days").toDate();
+			newWeekPoint.y = 0;
 			toReturn.push(newWeekPoint);
 		}
 

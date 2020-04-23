@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Box, Notification, Heading, Table } from 'react-bulma-components';
+import { Container, Notification, Heading, Table } from 'react-bulma-components';
 import FitnessWeekCompareSumReport from './FitnessWeekCompareSumReport';
 import TimeUtil from './time-util';
 
@@ -8,7 +8,7 @@ class FitnessWeekSumReport extends Component {
 		if (this.props.sumData && this.props.sumData.totalCalories !== undefined) {
 			const timeInDaysHoursMinutes = TimeUtil.convertMinutes(this.props.sumData.totalTime);
 			return (
-				<Box>
+				<Container className="padded">
 					<Container>
 						<Heading>{this.props.title}</Heading>
 						<Table>
@@ -35,12 +35,12 @@ class FitnessWeekSumReport extends Component {
 						</Table>
 					</Container>
 					{this.props.children}
-				</Box>
+				</Container>
 			);
 		}
 		else {
 			return (
-				<Box>
+				<Container>
 					<Container>
 						<Heading>{this.props.title}</Heading>
 						<Notification>
@@ -48,7 +48,7 @@ class FitnessWeekSumReport extends Component {
 						</Notification>
 					</Container>
 					{this.props.children}
-				</Box>
+				</Container>
 			);
 		}
 	}

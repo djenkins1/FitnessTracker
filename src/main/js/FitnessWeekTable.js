@@ -1,6 +1,6 @@
 const React = require('react');
 import FitnessWeek from './FitnessWeek';
-import { Table, Heading, Box } from 'react-bulma-components';
+import { Table, Heading, Container } from 'react-bulma-components';
 import { Redirect } from 'react-router-dom';
 import ConfirmModal from './ConfirmModal';
 
@@ -21,7 +21,7 @@ class FitnessWeekTable extends React.Component {
 	render() {
 		if (this.state.redirectToEdit) {
 			return (
-				<Redirect to="/create" />
+				<Redirect to="/edit" />
 			);
 		}
 
@@ -30,7 +30,7 @@ class FitnessWeekTable extends React.Component {
 		);
 		const modalMessageBody = "Are you sure you wish to delete the week?";//TODO: show details of week
 		return (
-			<Box>
+			<Container className="table-container padded">
 				<Heading>{this.props.title}</Heading>
 				<Table>
 					<thead>
@@ -50,7 +50,7 @@ class FitnessWeekTable extends React.Component {
 					</tbody>
 				</Table>
 				<ConfirmModal shown={this.state.showModal} yesBtnColor="danger" noBtnColor="info" onClose={this.closeModal} title="Delete Week" message={modalMessageBody} handleClickYes={this.handleClickYes} handleClickNo={this.closeModal} />
-			</Box>
+			</Container>
 		)
 	}
 
