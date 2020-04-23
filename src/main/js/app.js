@@ -23,7 +23,7 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			loading: true, fitnessWeeks: [], "graphAttrs": [
+			"graphAttrs": [
 				{
 					"id": 0,
 					"title": "Total Miles",
@@ -40,6 +40,9 @@ class App extends React.Component {
 					"attr": "totalTime"
 				}
 			],
+			"loading": true,
+			"fitnessWeeks": [],
+			"filteredWeeks": [],
 			"sumForWeeks": {},
 			"fitnessWeekSums": [],
 			"weekEditIndex": -1,
@@ -55,7 +58,6 @@ class App extends React.Component {
 		this.getSumDataForDates = this.getSumDataForDates.bind(this);
 		this.getSumsByMonths = this.getSumsByMonths.bind(this);
 		this.getAllFitnessData = this.getAllFitnessData.bind(this);
-		this.clearErrorMessageState = this.clearErrorMessageState.bind(this);
 		this.handleError = this.handleError.bind(this);
 		this.handleClickDelete = this.handleClickDelete.bind(this);
 		this.findWeekIndexById = this.findWeekIndexById.bind(this);
@@ -64,6 +66,7 @@ class App extends React.Component {
 		this.addWeekAjax = this.addWeekAjax.bind(this);
 		this.getSumDataForLastYear = this.getSumDataForLastYear.bind(this);
 		this.getSumDataForThisYearAndLastYear = this.getSumDataForThisYearAndLastYear.bind(this);
+		this.clearPartialStateAfterNavigateLink = this.clearPartialStateAfterNavigateLink.bind(this);
 	}
 
 	componentDidMount() {
@@ -81,11 +84,11 @@ class App extends React.Component {
 		const weekFromEditIndex = (this.state.weekEditIndex >= 0 ? this.state.fitnessWeeks[this.state.weekEditIndex] : {});
 		return (
 			<Router>
-				<TopNavigation onClick={this.clearErrorMessageState} />
+				<TopNavigation onClick={this.clearPartialStateAfterNavigateLink} />
 				<Switch>
 					<Route path="/graph">
 						<ErrorHandlerRedirect error={this.state.error} >
-							<FitnessWeekGraphFilter error={this.state.error} showByX="dateRecorded" showAttrs={this.state.graphAttrs} weeks={this.state.fitnessWeeks}>
+							<FitnessWeekGraphFilter showByX="dateRecorded" showAttrs={this.state.graphAttrs} weeks={this.state.filteredWeeks}>
 								<FitnessWeekDateFilter {...dateFilter} onFilterDates={this.handleFilterDates} />
 							</FitnessWeekGraphFilter>
 						</ErrorHandlerRedirect>
@@ -149,6 +152,7 @@ class App extends React.Component {
 
 	sortWeeks() {
 		this.state.fitnessWeeks.sort(this.compareWeeks);
+		this.state.filteredWeeks.sort(this.compareWeeks);
 	}
 
 	compareWeeks(a, b) {
@@ -170,11 +174,11 @@ class App extends React.Component {
 
 	getDateFilterDetails() {
 		//this grabs the first and last fitness weeks to use as the default start and end dates
-		if (this.state.fitnessWeeks && this.state.fitnessWeeks.length > 0) {
+		if (this.state.filteredWeeks && this.state.filteredWeeks.length > 0) {
 			const firstIndex = 0;
-			const lastIndex = this.state.fitnessWeeks.length - 1;
-			const startDate = this.state.fitnessWeeks[firstIndex].dateRecorded;
-			const endDate = this.state.fitnessWeeks[lastIndex].dateRecorded;
+			const lastIndex = this.state.filteredWeeks.length - 1;
+			const startDate = this.state.filteredWeeks[firstIndex].dateRecorded;
+			const endDate = this.state.filteredWeeks[lastIndex].dateRecorded;
 			return {
 				"startDate": startDate,
 				"endDate": endDate
@@ -185,8 +189,13 @@ class App extends React.Component {
 		}
 	}
 
-	clearErrorMessageState() {
-		this.setState({ "error": null, "weekEditIndex": -1, "redirectForm": false });
+	clearPartialStateAfterNavigateLink() {
+		this.setState({
+			"error": null,
+			"weekEditIndex": -1,
+			"redirectForm": false,
+			"filteredWeeks": this.state.fitnessWeeks
+		});
 	}
 
 	getAllFitnessData() {
@@ -204,8 +213,7 @@ class App extends React.Component {
 				}
 				else {
 					res.json().then((data) => {
-						this.setState({ fitnessWeeks: data });
-						this.sortWeeks();
+						this.setState({ fitnessWeeks: data, filteredWeeks: data }, () => { this.sortWeeks() });
 						this.getSumDataForDates(defaultDates.startDate, defaultDates.endDate);
 						this.getSumDataForLastYear(defaultDates.startDate, defaultDates.endDate);
 						this.getSumsByMonths(defaultDates.startDate, defaultDates.endDate);
@@ -355,7 +363,7 @@ class App extends React.Component {
 				}
 				else {
 					res.json().then((data) => {
-						this.setState({ fitnessWeeks: data });
+						this.setState({ filteredWeeks: data });
 						this.sortWeeks();
 						this.setState({ "loading": false });
 					});
