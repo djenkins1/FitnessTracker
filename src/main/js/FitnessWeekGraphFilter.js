@@ -10,7 +10,7 @@ class FitnessWeekGraphFilter extends Component {
 	render() {
 		const tabs = this.convertAttrsToTabs(this.props.showAttrs);
 		return (
-			<Container>
+			<Container className="padded">
 				<Tabs>
 					{tabs}
 				</Tabs>

@@ -30,7 +30,7 @@ class FitnessWeekTable extends React.Component {
 		);
 		const modalMessageBody = "Are you sure you wish to delete the week?";//TODO: show details of week
 		return (
-			<Container className="table-container">
+			<Container className="table-container padded">
 				<Heading>{this.props.title}</Heading>
 				<Table>
 					<thead>

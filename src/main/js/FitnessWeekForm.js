@@ -41,7 +41,7 @@ class FitnessWeekForm extends Component {
 		}
 
 		return (
-			<Container>
+			<Container className="padded">
 				<Heading>{this.props.title}</Heading>
 				<form onSubmit={this.handleSubmit} noValidate={true}>
 					<Form.Field>
@@ -138,7 +138,6 @@ class FitnessWeekForm extends Component {
 	}
 
 	handleInputChange(event) {
-
 		const target = event.target;
 		const value = target.value;
 		const name = target.name;

@@ -8,7 +8,7 @@ class FitnessWeekSumReport extends Component {
 		if (this.props.sumData && this.props.sumData.totalCalories !== undefined) {
 			const timeInDaysHoursMinutes = TimeUtil.convertMinutes(this.props.sumData.totalTime);
 			return (
-				<Container>
+				<Container className="padded">
 					<Container>
 						<Heading>{this.props.title}</Heading>
 						<Table>

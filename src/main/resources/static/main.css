@@ -1,5 +1,5 @@
 div.spacedContainer {
-	margin-top: 2rem;
+	margin-top: 1rem;
 }
 
 li.is-active {
@@ -14,10 +14,27 @@ input[type="email"] {
 	width: 100%;
 }
 
-.spaced-checkbox{
-	margin-right: 0.5rem; /* Give some spacing between each checkbox on add week form */
+.spaced-checkbox {
+	margin-right: 0.5rem;
+	/* Give some spacing between each checkbox on add week form */
 }
 
-td.date-no-wrap{
+.paddedHorizontal,
+.padded {
+	padding-left: 1rem;
+	padding-right: 1rem;
+}
+
+.paddedBottom,
+.padded {
+	padding-bottom: 1rem;
+}
+
+.paddedTop,
+.padded {
+	padding-top: 1rem;
+}
+
+td.date-no-wrap {
 	white-space: nowrap;
 }
