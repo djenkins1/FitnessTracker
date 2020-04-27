@@ -2,9 +2,11 @@
 
 This is a RESTful web application using Spring Boot. It is used to track physical exercise by week.
 
-![](https://github.com/djenkins1/FitnessTracker/workflows/.github/workflows/gradle.yml/badge.svg?branch=dev)
+Dev:
+![](https://github.com/djenkins1/FitnessTracker/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=dev)
 
-![](https://github.com/djenkins1/FitnessTracker/workflows/.github/workflows/gradle.yml/badge.svg)
+Master:
+![](https://github.com/djenkins1/FitnessTracker/workflows/Java%20CI%20with%20Gradle/badge.svg)
 
 
 ## Getting Started
