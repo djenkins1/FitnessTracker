@@ -1,13 +1,9 @@
 # Fitness Tracker
 
+Dev: ![](https://github.com/djenkins1/FitnessTracker/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=dev)
+Master:![](https://github.com/djenkins1/FitnessTracker/workflows/Java%20CI%20with%20Gradle/badge.svg)
+
 This is a RESTful web application using Spring Boot. It is used to track physical exercise by week.
-
-Dev:
-![](https://github.com/djenkins1/FitnessTracker/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=dev)
-
-Master:
-![](https://github.com/djenkins1/FitnessTracker/workflows/Java%20CI%20with%20Gradle/badge.svg)
-
 
 ## Getting Started
 
