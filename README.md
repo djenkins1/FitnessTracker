@@ -1,7 +1,8 @@
 # Fitness Tracker
 
-This is a RESTful web application using Spring Boot. It is used to track physical exercise by week.
+![Build](https://github.com/djenkins1/FitnessTracker/workflows/build/badge.svg)
 
+This is a RESTful web application using Spring Boot. It is used to track physical exercise by week.
 
 ## Getting Started
 
