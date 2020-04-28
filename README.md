@@ -1,6 +1,6 @@
 # Fitness Tracker
 
-![Build](https://github.com/djenkins1/FitnessTracker/workflows/build/badge.svg)
+![Travis CI](https://travis-ci.com/djenkins1/FitnessTracker.svg?branch=master)
 
 This is a RESTful web application using Spring Boot. It is used to track physical exercise by week.
 
@@ -43,6 +43,7 @@ TBD
 * [SpringFox](https://springfox.github.io/springfox/docs/current/) - Swagger Documentation
 * [PostgreSQL](https://www.postgresql.org/docs/) - Database
 * [React](https://reactjs.org/docs/getting-started.html) - UI
+* [Travis CI](https://docs.travis-ci.com/user/tutorial/) - CD/CI
 
 ## Authors
 
@@ -55,6 +56,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) f
 
 ## Acknowledgments
 
-* Thanks to Billie Thompson [PurpleBooth](https://github.com/PurpleBooth) for a wonderful template for this Readme.
+* Thanks to Billie Thompson([PurpleBooth](https://github.com/PurpleBooth)) for a wonderful template for this Readme.
 
 
