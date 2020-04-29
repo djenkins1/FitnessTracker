@@ -7,3 +7,4 @@ addons:
   artifacts:
     paths:
     - build/libs/
+    s3_region: "us-east-2"
