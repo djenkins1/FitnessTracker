@@ -7,3 +7,7 @@ addons:
   artifacts:
     paths:
     - build/libs/
+branches:
+  only:
+  - master
+  - dev
