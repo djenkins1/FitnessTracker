@@ -3,3 +3,7 @@ services:
   - postgresql
 before_script:
   - psql -c 'create database fitness;' -U postgres
+addons:
+  artifacts:
+    paths:
+    - build/libs/
