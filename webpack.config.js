@@ -1,5 +1,6 @@
 var path = require('path');
 
 module.exports = (env) => {
-  return require(`./webpack.config.${env}.js`)
+  var envName = ( env === 'prod' || env === 'test' || env === 'dev' ? env : 'dev' );//default env to dev if not passed in as environment variable
+  return require(`./webpack.config.${envName}.js`)
 }
